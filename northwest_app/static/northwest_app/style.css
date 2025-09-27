@@ -1,0 +1,129 @@
+:root {
+    --color-fictitious: #6c757d;
+    --color-current: #ffc107;
+    --color-primary-light: #e6f3ff;
+    --color-warning-light: #ffffe0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    padding-bottom: 2rem;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    font-weight: 600;
+}
+
+.table-results {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-results th, .table-results td {
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+}
+
+.table-results th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.current-cell {
+    background-color: var(--color-current) !important;
+    font-weight: bold;
+    position: relative;
+}
+
+.current-cell::after {
+    content: "★";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.7rem;
+}
+
+.fictitious-cell {
+    background-color: #f8f9fa;
+    font-style: italic;
+    color: var(--color-fictitious);
+}
+
+.fictitious-header {
+    background-color: #e9ecef;
+    font-style: italic;
+    color: var(--color-fictitious);
+}
+
+.fictitious-header strong {
+    color: var(--color-fictitious);
+}
+
+.table-warning-cell {
+    background-color: var(--color-warning-light);
+    font-weight: 600;
+}
+
+.table-primary-cell {
+    background-color: var(--color-primary-light);
+    font-weight: 600;
+}
+
+.cost-value {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.allocation-value {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.badge-step {
+    font-size: 0.7em;
+    margin-top: 3px;
+}
+
+.summary-card {
+    border-left: 4px solid #0d6efd;
+}
+
+.solution-card {
+    border-left: 4px solid #198754;
+}
+
+.steps-card {
+    border-left: 4px solid #6c757d;
+}
+
+.total-cost-box {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid #90caf9;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-results {
+        font-size: 0.9rem;
+    }
+    
+    .table-results th, .table-results td {
+        padding: 6px;
+    }
+}

@@ -1,0 +1,317 @@
+{% load custom_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - Método de la Esquina Noroeste</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'northwest_app/style.css' %}">
+</head>
+<body>
+    <div class="container mt-4">
+        <header class="py-3 mb-4 border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-grid-3x3-gap-fill text-primary"></i>
+                    Método de la Esquina Noroeste
+                </h1>
+                <div>
+                    <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-plus-circle"></i> Nuevo Problema
+                    </a>
+                    <a href="{% url 'northwest_app:history' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-clock-history"></i> Historial
+                    </a>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Alerta informativa sobre ajuste -->
+        {% if has_adjusted_data %}
+        <div class="alert alert-info mb-4">
+            <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Problema Ajustado</h5>
+            <p class="mb-0">
+                El problema original no estaba balanceado (Oferta total: <strong>{{ problem.total_supply }}</strong>, Demanda total: <strong>{{ problem.total_demand }}</strong>). 
+                Se agregó {% if problem.total_supply > problem.total_demand %}un destino ficticio{% else %}un origen ficticio{% endif %} 
+                para equilibrar oferta y demanda (Nuevo total: <strong>{{ total_supply }}</strong>).
+                Los valores en <span class="fst-italic">cursiva</span> representan las asignaciones ficticias.
+            </p>
+        </div>
+        {% endif %}
+        
+        <!-- Resumen del problema -->
+        <div class="card summary-card mb-4">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h3 class="h5 mb-0"><i class="bi bi-card-checklist"></i> Resumen del Problema</h3>
+                <span class="badge bg-light text-dark">{% if has_adjusted_data %}Ajustado{% else %}Balanceado{% endif %}</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <h5 class="border-bottom pb-2"><i class="bi bi-box-arrow-up"></i> Ofertas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Origen</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for supply in problem.supplies %}
+                                    <tr>
+                                        <td>Origen {{ forloop.counter }}</td>
+                                        <td><strong>{{ supply }}</strong></td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if has_adjusted_data and problem.total_supply < problem.total_demand %}
+                                    <tr class="fictitious-cell">
+                                        <td>Origen Ficticio</td>
+                                        <td><strong>{{ problem.total_demand|sub:problem.total_supply }}</strong></td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-primary">
+                                        <th>Total Oferta</th>
+                                        <th>{{ total_supply }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2"><i class="bi bi-box-arrow-down"></i> Demandas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Destino</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for demand in problem.demands %}
+                                    <tr>
+                                        <td>Destino {{ forloop.counter }}</td>
+                                        <td><strong>{{ demand }}</strong></td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if has_adjusted_data and problem.total_supply > problem.total_demand %}
+                                    <tr class="fictitious-cell">
+                                        <td>Destino Ficticio</td>
+                                        <td><strong>{{ problem.total_supply|sub:problem.total_demand }}</strong></td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-primary">
+                                        <th>Total Demanda</th>
+                                        <th>{{ total_demand }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabla de datos iniciales -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="h5 mb-0"><i class="bi bi-table"></i> Datos Iniciales del Problema</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-results">
+                        <thead>
+                            <tr>
+                                <th>Costos</th>
+                                {% for j in destinations_range %}
+                                <th class="{% if has_adjusted_data and forloop.counter > problem.destinations %}fictitious-header{% endif %}">
+                                    Destino {{ forloop.counter }}
+                                    {% if has_adjusted_data and forloop.counter > problem.destinations %}<br><small class="fst-italic">(Ficticio)</small>{% endif %}
+                                </th>
+                                {% endfor %}
+                                <th class="table-warning-cell">Oferta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in origins_range %}
+                            <tr>
+                                <th class="{% if has_adjusted_data and forloop.counter > problem.origins %}fictitious-header{% endif %}">
+                                    Origen {{ forloop.counter }}
+                                    {% if has_adjusted_data and forloop.counter > problem.origins %}<br><small class="fst-italic">(Ficticio)</small>{% endif %}
+                                </th>
+                                {% for j in destinations_range %}
+                                <td class="{% if has_adjusted_data and forloop.counter > problem.destinations or has_adjusted_data and forloop.parentloop.counter > problem.origins %}fictitious-cell{% endif %}">
+                                    {% with row=table_data|index:i %}
+                                    {% with cell=row|index:j %}
+                                    {% if cell.is_fictitious %}
+                                        {% if has_adjusted_data and forloop.counter > problem.destinations %}
+                                            0
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    {% else %}
+                                        {{ cell.cost }}
+                                    {% endif %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                </td>
+                                {% endfor %}
+                                <td class="table-warning-cell">
+                                    <strong>{{ problem.supplies|index:forloop.counter0 }}</strong>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th class="table-warning-cell">Demanda</th>
+                                {% for j in destinations_range %}
+                                <td class="table-warning-cell">
+                                    {% if has_adjusted_data and forloop.counter > problem.destinations %}
+                                        <strong>{{ problem.total_supply|sub:problem.total_demand }}</strong>
+                                    {% else %}
+                                        <strong>{{ problem.demands|index:forloop.counter0 }}</strong>
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                                <td class="table-primary-cell">
+                                    <strong>{{ problem.total_supply }}</strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de solución -->
+        <div class="card solution-card mb-4">
+            <div class="card-header bg-success text-white">
+                <h3 class="h5 mb-0"><i class="bi bi-check-circle"></i> Solución por el Método de la Esquina Noroeste</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-results">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                {% for j in destinations_range %}
+                                <th class="{% if has_adjusted_data and forloop.counter > problem.destinations %}fictitious-header{% endif %}">
+                                    Destino {{ forloop.counter }}
+                                    {% if has_adjusted_data and forloop.counter > problem.destinations %}<br><small class="fst-italic">(Ficticio)</small>{% endif %}
+                                </th>
+                                {% endfor %}
+                                <th class="table-warning-cell">Oferta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in origins_range %}
+                            <tr>
+                                <th class="{% if has_adjusted_data and forloop.counter > problem.origins %}fictitious-header{% endif %}">
+                                    Origen {{ forloop.counter }}
+                                    {% if has_adjusted_data and forloop.counter > problem.origins %}<br><small class="fst-italic">(Ficticio)</small>{% endif %}
+                                </th>
+                                {% for j in destinations_range %}
+                                {% with row=table_data|index:i %}
+                                {% with cell=row|index:j %}
+                                <td class="{% if cell.is_current %}current-cell{% endif %} {% if cell.is_fictitious %}fictitious-cell{% endif %}">
+                                    <span class="allocation-value">{{ cell.allocation|default:"0" }}</span>
+                                    <br>
+                                    <span class="cost-value">({{ cell.cost }})</span>
+                                    {% if cell.step_operated %}
+                                    <br>
+                                    <span class="badge bg-primary badge-step">Paso {{ cell.step_operated }}</span>
+                                    {% endif %}
+                                </td>
+                                {% endwith %}
+                                {% endwith %}
+                                {% endfor %}
+                                <td class="table-warning-cell">
+                                    <strong>{{ supplies|index:i }}</strong>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th class="table-warning-cell">Demanda</th>
+                                {% for j in destinations_range %}
+                                <td class="table-warning-cell">
+                                    <strong>{{ demands|index:j }}</strong>
+                                </td>
+                                {% endfor %}
+                                <td class="table-primary-cell">
+                                    <strong>{{ problem.total_supply }}</strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="total-cost-box mt-4 text-center">
+                    <h4 class="mb-1">Costo Total de Transporte</h4>
+                    <h2 class="display-4 fw-bold text-primary">${{ solution.total_cost }}</h2>
+                    {% if has_adjusted_data %}
+                    <p class="mb-0 text-muted"><small>Nota: Las asignaciones ficticias no contribuyen al costo total</small></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pasos de la solución -->
+        <div class="card steps-card">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="h5 mb-0"><i class="bi bi-list-ol"></i> Pasos de la Solución</h3>
+            </div>
+            <div class="card-body">
+                <div class="steps-container" style="max-height: 300px; overflow-y: auto;">
+                    <ol class="list-group list-group-numbered">
+                        {% for step in solution.steps %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Paso {{ forloop.counter }}</div>
+                                Asignar <span class="badge bg-info rounded-pill">{{ step.allocation }} unidades</span> del 
+                                {% if step.i >= problem.origins %}
+                                <span class="fst-italic">Origen ficticio</span>
+                                {% else %}
+                                Origen {{ step.i|add:1 }}
+                                {% endif %}
+                                al 
+                                {% if step.j >= problem.destinations %}
+                                <span class="fst-italic">Destino ficticio</span>
+                                {% else %}
+                                Destino {{ step.j|add:1 }}
+                                {% endif %}
+                                con costo unitario {{ step.cost }}
+                            </div>
+                            <span class="badge bg-primary rounded-pill">${{ step.total_cost_step }}</span>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="mt-4 pt-3 border-top text-center">
+            <p class="text-muted">Método de la Esquina Noroeste - Solución generada el {% now "j F Y H:i" %}</p>
+            <div class="btn-group" role="group">
+                <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Resolver otro problema
+                </a>
+                <a href="{% url 'northwest_app:history' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-clock-history"></i> Ver historial
+                </a>
+                <button onclick="window.print()" class="btn btn-outline-primary">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

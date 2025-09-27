@@ -1,0 +1,108 @@
+# Archivos de Django
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+db.sqlite3
+migrations/
+
+# Entornos virtuales
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Archivos de entorno
+.env
+.env.local
+.env.production
+.env.development
+.secrets.py
+
+# Archivos de log
+*.log
+logs/
+
+# Archivos estáticos y media (en desarrollo)
+/staticfiles/
+/mediafiles/
+/static/
+/media/
+
+# Archivos del IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos de base de datos (excepto SQLite que ya está arriba)
+*.db
+
+# Archivos de coverage y testing
+.coverage
+htmlcov/
+.pytest_cache/
+/.tox/
+
+# Archivos de package
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Archivos de documentación
+docs/_build/
+
+# Archivos específicos de Ubuntu
+~/
+*.un~
+.core
+
+# Archivos de backup
+*.bak
+*.backup
+
+# Archivos de Celery 
+celerybeat-schedulce
+celerybeat.pid
+
+# Archivos de PyCharm
+.idea/
+
+# Archivos de PyInstaller
+*.manifest
+*.spec
+
+# Archivos de IPython
+.ipynb_checkpoints
+
+# Archivos de Jupyter Notebook
+.ipynb_checkpoints/
+
+# Archivos de coverage
+coverage.xml
+.coverage

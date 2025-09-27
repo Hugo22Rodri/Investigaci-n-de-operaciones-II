@@ -1,0 +1,468 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Método de la Esquina Noroeste - Solución de Problemas de Transporte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'northwest_app/style-index.css' %}">
+    <style>
+        /* Estilos adicionales para asegurar funcionalidad */
+        .btn-light, .btn-outline-light {
+            cursor: pointer !important;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Asegurar que los enlaces sean clickeables */
+        a[href]:not(.nav-link) {
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        /* Prevenir interferencias de otros estilos */
+        .hero-buttons a {
+            pointer-events: auto !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-grid-3x3-gap me-2"></i>Esquina Noroeste
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#introduccion">Introducción</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pasos">Pasos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ejemplo">Ejemplo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ventajas">Ventajas</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-calculator me-1"></i>Usar Calculadora
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="hero-badge mb-3">Método de Optimización</div>
+                    <h1 class="display-4 fw-bold mb-3 hero-title">
+                        <i class="bi bi-grid-3x3-gap hero-icon"></i> Método de la Esquina Noroeste
+                    </h1>
+                    <p class="lead mb-4 hero-subtitle">Solución inteligente para problemas de transporte y distribución de recursos</p>
+                    <div class="hero-buttons">
+                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-light btn-lg rounded-pill px-4 py-3 me-3" id="calcularBtn">
+                            <i class="bi bi-calculator me-2"></i> Calcular Ahora
+                        </a>
+                        <a href="#introduccion" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3" id="saberMasBtn">
+                            <i class="bi bi-book me-2"></i> Saber Más
+                        </a>
+                    </div>
+                    <div class="hero-stats mt-5">
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <div class="stat-item">
+                                    <i class="bi bi-lightning"></i>
+                                    <span>Rápido</span>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="stat-item">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span>Preciso</span>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="stat-item">
+                                    <i class="bi bi-graph-up"></i>
+                                    <span>Eficiente</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Introducción -->
+                    <section id="introduccion" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">01</span>
+                            <h2 class="section-title">¿Qué es el método de la Esquina Noroeste?</h2>
+                        </div>
+                        <div class="card feature-card">
+                            <div class="card-body p-4">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-8">
+                                        <p class="card-text fs-5">El método de la Esquina Noroeste es un algoritmo fundamental en investigación de operaciones utilizado para encontrar una solución inicial factible en problemas de transporte. Este método es especialmente valioso en logística y cadena de suministro para optimizar la distribución de productos desde múltiples orígenes hacia diversos destinos.</p>
+                                        
+                                        <p class="card-text">La técnica se caracteriza por su simplicidad y eficiencia, comenzando siempre en la celda superior izquierda (esquina noroeste) de la matriz de costos y avanzando sistemáticamente para asignar recursos de manera óptima.</p>
+                                        
+                                        <div class="mt-4">
+                                            <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary">
+                                                <i class="bi bi-calculator me-2"></i>Probar el Método
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 text-center">
+                                        <div class="method-visual">
+                                            <div class="grid-container">
+                                                <div class="grid-cell start-cell">Inicio</div>
+                                                <div class="grid-arrow">→</div>
+                                                <div class="grid-cell">Asignación</div>
+                                                <div class="grid-arrow">→</div>
+                                                <div class="grid-cell end-cell">Solución</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Pasos del método -->
+                    <section id="pasos" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">02</span>
+                            <h2 class="section-title">Pasos del método</h2>
+                        </div>
+                        <div class="card step-card">
+                            <div class="card-body p-4">
+                                <div class="steps-container">
+                                    <div class="step-item">
+                                        <div class="step-number">1</div>
+                                        <div class="step-content">
+                                            <h5>Inicio en la esquina noroeste</h5>
+                                            <p>Comience en la celda superior izquierda de la matriz de transporte</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">2</div>
+                                        <div class="step-content">
+                                            <h5>Asignación minima</h5>
+                                            <p>Asigne la menor cantidad posible sin exceder oferta ni demanda</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">3</div>
+                                        <div class="step-content">
+                                            <h5>Ajuste de valores</h5>
+                                            <p>Actualice la oferta y demanda restando la cantidad asignada</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">4</div>
+                                        <div class="step-content">
+                                            <h5>Movimiento estratégico</h5>
+                                            <p>Desplácese a la derecha o hacia abajo según la disponibilidad</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">5</div>
+                                        <div class="step-content">
+                                            <h5>Repetición del proceso</h5>
+                                            <p>Continue hasta satisfacer todas las ofertas y demandas</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Ejemplo -->
+                    <section id="ejemplo" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">03</span>
+                            <h2 class="section-title">Ejemplo ilustrativo</h2>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <p class="lead">Supongamos que tenemos 2 fábricas (orígenes) y 3 tiendas (destinos) con los siguientes costos de transporte:</p>
+                                
+                                <div class="table-responsive example-table mb-4">
+                                    <table class="table table-custom">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Tienda A</th>
+                                                <th>Tienda B</th>
+                                                <th>Tienda C</th>
+                                                <th class="text-center bg-light">Oferta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-light">Fábrica 1</th>
+                                                <td class="highlight-cell">5</td>
+                                                <td>4</td>
+                                                <td>3</td>
+                                                <td class="text-center fw-bold bg-light">100</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Fábrica 2</th>
+                                                <td>8</td>
+                                                <td>4</td>
+                                                <td>3</td>
+                                                <td class="text-center fw-bold bg-light">200</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center bg-light">Demanda</th>
+                                                <td class="text-center fw-bold bg-light">80</td>
+                                                <td class="text-center fw-bold bg-light">120</td>
+                                                <td class="text-center fw-bold bg-light">100</td>
+                                                <td class="bg-light"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="solution-process">
+                                    <h5 class="process-title">Proceso de solución paso a paso:</h5>
+                                    <div class="process-steps">
+                                        <div class="process-step">
+                                            <span class="step-marker">1</span>
+                                            <p>Asignamos 80 unidades de Fábrica 1 a Tienda A (mínimo entre 100 y 80)</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">2</span>
+                                            <p>Ajustamos: Oferta F1 = 20, Demanda TA = 0. Movemos a Tienda B</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">3</span>
+                                            <p>Asignamos 20 unidades de F1 a TB (mínimo entre 20 y 120)</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">4</span>
+                                            <p>Ajustamos: Oferta F1 = 0, Demanda TB = 100. Movemos a Fábrica 2</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">5</span>
+                                            <p>Continuamos el proceso hasta satisfacer toda la demanda</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Ventajas -->
+                    <section id="ventajas" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">04</span>
+                            <h2 class="section-title">Ventajas del método</h2>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <div class="feature-card text-center p-3 h-100">
+                                            <div class="feature-icon">
+                                                <i class="bi bi-lightning-charge"></i>
+                                            </div>
+                                            <h5>Simple y rápido</h5>
+                                            <p class="text-muted">Fácil de implementar sin necesidad de cálculos complejos, ideal para soluciones inmediatas</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="feature-card text-center p-3 h-100">
+                                            <div class="feature-icon">
+                                                <i class="bi bi-check2-circle"></i>
+                                            </div>
+                                            <h5>Garantiza solución factible</h5>
+                                            <p class="text-muted">Siempre encuentra una solución inicial factible para cualquier problema balanceado</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="feature-card text-center p-3 h-100">
+                                            <div class="feature-icon">
+                                                <i class="bi bi-arrow-left-right"></i>
+                                            </div>
+                                            <h5>Base para mejoras</h5>
+                                            <p class="text-muted">Sirve como punto de partida ideal para métodos de optimización más avanzados</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Call to Action -->
+                    <section class="content-section text-center py-5">
+                        <div class="cta-card">
+                            <h3 class="cta-title">¿Listo para resolver tu problema de transporte?</h3>
+                            <p class="cta-subtitle">Nuestra herramienta calculará automáticamente la solución óptima usando el método de la Esquina Noroeste</p>
+                            <div class="cta-buttons">
+                                <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-lg px-5 py-3">
+                                    <i class="bi bi-calculator-fill me-2"></i> Comenzar Ahora
+                                </a>
+                            </div>
+                            <div class="cta-features mt-4">
+                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Instantáneo</span>
+                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Preciso</span>
+                                <span class="badge bg-light text-dark"><i class="bi bi-check me-1"></i>Gratuito</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 Método de la Esquina Noroeste. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-calculator me-1"></i> Usar Calculadora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript mejorado y seguro
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página cargada correctamente');
+            
+            // 1. Manejo específico del botón "Saber Más"
+            const saberMasBtn = document.getElementById('saberMasBtn');
+            if (saberMasBtn) {
+                saberMasBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Botón "Saber Más" clickeado');
+                    
+                    const targetSection = document.getElementById('introduccion');
+                    if (targetSection) {
+                        const offsetTop = targetSection.offsetTop - 80;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            }
+            
+            // 2. Manejo específico del botón "Calcular Ahora"
+            const calcularBtn = document.getElementById('calcularBtn');
+            if (calcularBtn) {
+                calcularBtn.addEventListener('click', function(e) {
+                    console.log('Botón "Calcular Ahora" clickeado - redirigiendo...');
+                    // Permitir que el enlace funcione normalmente
+                    // No preventDefault() para permitir la redirección
+                });
+            }
+            
+            // 3. Smooth scrolling para enlaces de navegación (solo estos)
+            document.querySelectorAll('.navbar-nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        // Cerrar navbar móvil si está abierto
+                        const navbarCollapse = document.querySelector('.navbar-collapse');
+                        if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                            const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+                            bsCollapse.hide();
+                        }
+                        
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 4. Navbar background on scroll
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.custom-navbar');
+                if (navbar) {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('navbar-scrolled');
+                    } else {
+                        navbar.classList.remove('navbar-scrolled');
+                    }
+                }
+            });
+            
+            // 5. Forzar estilo de cursor pointer para todos los botones
+            document.querySelectorAll('.btn, a[href]').forEach(element => {
+                element.style.cursor = 'pointer';
+            });
+        });
+
+        // Función de respaldo en caso de que falle el DOMContentLoaded
+        function backupNavigation() {
+            const calcularBtn = document.getElementById('calcularBtn');
+            if (calcularBtn) {
+                calcularBtn.onclick = function() {
+                    window.location.href = "{% url 'northwest_app:setup' %}";
+                    return false;
+                };
+            }
+            
+            const saberMasBtn = document.getElementById('saberMasBtn');
+            if (saberMasBtn) {
+                saberMasBtn.onclick = function() {
+                    const target = document.getElementById('introduccion');
+                    if (target) {
+                        target.scrollIntoView({behavior: 'smooth'});
+                    }
+                    return false;
+                };
+            }
+        }
+
+        // Ejecutar respaldo después de un breve tiempo
+        setTimeout(backupNavigation, 100);
+    </script>
+</body>
+</html>
