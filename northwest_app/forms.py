@@ -1,4 +1,5 @@
 from django import forms
+from .models import TransportationProblem
 
 class ProblemSetupForm(forms.Form):
     origins = forms.IntegerField(
@@ -17,6 +18,11 @@ class ProblemSetupForm(forms.Form):
         label='¿El problema está balanceado?', 
         required=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    method = forms.ChoiceField(
+        label='Método de Solución',
+        choices=TransportationProblem.METHOD_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
 
 class DataInputForm(forms.Form):

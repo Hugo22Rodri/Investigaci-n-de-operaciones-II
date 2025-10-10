@@ -35,7 +35,7 @@
                             <i class="bi bi-box-arrow-up me-2"></i> Ofertas de Orígenes
                         </div>
                         <div class="card-body">
-                            {% for i in origins|rjust:origins %}
+                            {% for i in range_rows %}
                             <div class="mb-3">
                                 <label class="form-label">Oferta del Origen {{ forloop.counter }}</label>
                                 <div class="input-with-icon">
@@ -56,7 +56,7 @@
                             <i class="bi bi-box-arrow-in-down me-2"></i> Demandas de Destinos
                         </div>
                         <div class="card-body">
-                            {% for j in destinations|rjust:destinations %}
+                            {% for j in range_cols %}
                             <div class="mb-3">
                                 <label class="form-label">Demanda del Destino {{ forloop.counter }}</label>
                                 <div class="input-with-icon">
@@ -82,16 +82,16 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    {% for j in destinations|rjust:destinations %}
+                                    {% for j in range_cols %}
                                     <th>Destino {{ forloop.counter }}</th>
                                     {% endfor %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for i in origins|rjust:origins %}
+                                {% for i in range_rows %}
                                 <tr>
                                     <th class="fw-bold">Origen {{ forloop.counter }}</th>
-                                    {% for j in destinations|rjust:destinations %}
+                                    {% for j in range_cols %}
                                     <td>
                                         <input type="number" class="form-control text-center" name="cost_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" min="0" step="0.01" required>
                                     </td>

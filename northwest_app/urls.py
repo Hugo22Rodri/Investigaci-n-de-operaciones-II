@@ -4,9 +4,12 @@ from . import views
 app_name = 'northwest_app'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('setup/', views.setup_problem, name='setup'),
-    path('data-input/', views.data_input, name='data_input'),
-    path('results/<int:problem_id>/', views.results, name='results'),
-    path('history/', views.history, name='history'),
+    path('', views.IndexView.as_view(), name='index'),
+    path('esquina_noroeste/', views.EsquinaNoroesteView.as_view(), name='esquina_noroeste'),
+    path('costo_minimo', views.CostoMinimoView.as_view(), name='costo_minimo'),
+    path('setup/', views.SetupProblemView.as_view(), name='setup'),
+    path('data-input/', views.DataInputView.as_view(), name='data_input'),
+    path('results/<int:problem_id>/', views.ResultsView.as_view(), name='results'),
+    path('diagram/<int:problem_id>/', views.DiagramResultsView.as_view(), name='diagram_results'),
+    path('history/', views.HistoryView.as_view(), name='history'),
 ]

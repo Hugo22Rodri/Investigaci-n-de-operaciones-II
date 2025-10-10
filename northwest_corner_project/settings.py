@@ -61,7 +61,9 @@ ROOT_URLCONF = 'northwest_corner_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,6 +72,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+                'custom_filters': 'northwest_app.templatetags.custom_filters',
+            },
         },
     },
 ]
@@ -124,7 +129,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS =[
-    BASE_DIR / "static",
+    os.path.join(BASE_DIR, 'northwest_app/static'),
 ]
 
 # Default primary key field type

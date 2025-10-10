@@ -23,3 +23,10 @@ def sub(value, arg):
         return int(value) - int(arg)
     except (ValueError, TypeError):
         return ''
+
+@register.filter
+def mul(value, arg):
+    try:
+        return float(value) * float(arg)
+    except (ValueError, TypeError):
+        return ''

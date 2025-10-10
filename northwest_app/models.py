@@ -1,6 +1,11 @@
 from django.db import models
 
 class TransportationProblem(models.Model):
+    METHOD_CHOICES = [
+        ('northwest', 'Esquina Noroeste'),
+        ('minimum_cost', 'Costo Mínimo')
+    ]
+    
     name = models.CharField(max_length=100, blank=True)
     origins = models.IntegerField()
     destinations = models.IntegerField()
@@ -8,6 +13,7 @@ class TransportationProblem(models.Model):
     demands = models.JSONField()   # Almacena las demandas
     costs = models.JSONField()     # Almacena la matriz de costos
     balanced = models.BooleanField(default=False)
+    method = models.CharField(max_length=20, choices=METHOD_CHOICES, default='northwest')
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -33,6 +39,7 @@ class Solution(models.Model):
     adjusted_supplies = models.JSONField(null=True, blank=True)  # Ofertas ajustadas
     adjusted_demands = models.JSONField(null=True, blank=True)   # Demandas ajustadas
     adjusted_costs = models.JSONField(null=True, blank=True)     # Costos ajustados
+    method = models.CharField(max_length=20, choices=TransportationProblem.METHOD_CHOICES, default='northwest')
     solved_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
