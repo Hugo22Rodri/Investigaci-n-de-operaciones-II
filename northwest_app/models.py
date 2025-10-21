@@ -3,7 +3,8 @@ from django.db import models
 class TransportationProblem(models.Model):
     METHOD_CHOICES = [
         ('northwest', 'Esquina Noroeste'),
-        ('minimum_cost', 'Costo Mínimo')
+        ('minimum_cost', 'Costo Mínimo'),
+        ('hungarian', 'Método Húngaro'),
     ]
     
     name = models.CharField(max_length=100, blank=True)

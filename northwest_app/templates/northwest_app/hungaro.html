@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Método de la Esquina Noroeste - Solución de Problemas de Transporte</title>
+    <title>Método Húngaro - Solución de Problemas de Asignación</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'northwest_app/style-index.css' %}">
+    <link rel="stylesheet" href="{% static 'northwest_app/style-hungaro.css' %}">
     <style>
         /* Estilos adicionales para asegurar funcionalidad */
         .btn-light, .btn-outline-light {
@@ -36,7 +36,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-grid-3x3-gap me-2"></i>Esquina Noroeste
+                <i class="bi bi-bezier2 me-2"></i>Método Húngaro
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -47,37 +47,37 @@
                         <a class="nav-link" href="#introduccion">Introducción</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#pasos">Pasos</a>
+                        <a class="nav-link" href="#algoritmo">Algoritmo</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#ejemplo">Ejemplo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#ventajas">Ventajas</a>
+                        <a class="nav-link" href="#aplicaciones">Aplicaciones</a>
                     </li>
                     <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-diagram-3 me-1"></i>Métodos
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="{% url 'northwest_app:index' %}">
-                                <i class="bi bi-house me-2"></i>Inicio
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
-                                <i class="bi bi-graph-down me-2"></i>Costo Mínimo
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'northwest_app:hungaro' %}">
-                                <i class="bi bi-table"></i> Método Húngaro
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-diagram-3 me-1"></i>Métodos
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'northwest_app:index' %}">
+                                    <i class="bi bi-house me-2"></i>Inicio
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'northwest_app:esquina_noroeste' %}">
+                                    <i class="bi bi-grid-3x3-gap me-2"></i>Esquina Noroeste
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
+                                    <i class="bi bi-graph-down me-2"></i>Costo Mínimo
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="nav-item ms-2">
                         <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-sm">
                             <i class="bi bi-calculator me-1"></i>Usar Calculadora
@@ -93,11 +93,11 @@
         <div class="container">
             <div class="row align-items-center min-vh-75">
                 <div class="col-lg-8 mx-auto text-center">
-                    <div class="hero-badge mb-3">Método de Optimización</div>
+                    <div class="hero-badge mb-3">Algoritmo de Asignación Óptima</div>
                     <h1 class="display-4 fw-bold mb-3 hero-title">
-                        <i class="bi bi-grid-3x3-gap hero-icon"></i> Método de la Esquina Noroeste
+                        <i class="bi bi-bezier2 hero-icon"></i> Método Húngaro
                     </h1>
-                    <p class="lead mb-4 hero-subtitle">Solución inteligente para problemas de transporte y distribución de recursos</p>
+                    <p class="lead mb-4 hero-subtitle">Solución óptima para problemas de asignación con complejidad polinomial</p>
                     <div class="hero-buttons">
                         <a href="{% url 'northwest_app:setup' %}" class="btn btn-light btn-lg rounded-pill px-4 py-3 me-3" id="calcularBtn">
                             <i class="bi bi-calculator me-2"></i> Calcular Ahora
@@ -110,20 +110,20 @@
                         <div class="row justify-content-center">
                             <div class="col-auto">
                                 <div class="stat-item">
-                                    <i class="bi bi-lightning"></i>
-                                    <span>Rápido</span>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="stat-item">
                                     <i class="bi bi-check-circle"></i>
-                                    <span>Preciso</span>
+                                    <span>Óptimo</span>
                                 </div>
                             </div>
                             <div class="col-auto">
                                 <div class="stat-item">
-                                    <i class="bi bi-graph-up"></i>
+                                    <i class="bi bi-lightning"></i>
                                     <span>Eficiente</span>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="stat-item">
+                                    <i class="bi bi-bezier"></i>
+                                    <span>Completo</span>
                                 </div>
                             </div>
                         </div>
@@ -149,15 +149,15 @@
                     <section id="introduccion" class="content-section">
                         <div class="section-header mb-4">
                             <span class="section-badge">01</span>
-                            <h2 class="section-title">¿Qué es el método de la Esquina Noroeste?</h2>
+                            <h2 class="section-title">¿Qué es el método Húngaro?</h2>
                         </div>
                         <div class="card feature-card">
                             <div class="card-body p-4">
                                 <div class="row align-items-center">
                                     <div class="col-lg-8">
-                                        <p class="card-text fs-5">El método de la Esquina Noroeste es un algoritmo fundamental en investigación de operaciones utilizado para encontrar una solución inicial factible en problemas de transporte. Este método es especialmente valioso en logística y cadena de suministro para optimizar la distribución de productos desde múltiples orígenes hacia diversos destinos.</p>
+                                        <p class="card-text fs-5">El método Húngaro es un algoritmo de optimización combinatoria que resuelve problemas de asignación de manera óptima en tiempo polinomial. Fue desarrollado por el matemático húngaro Dénes Kőnig y posteriormente mejorado por Harold W. Kuhn.</p>
                                         
-                                        <p class="card-text">La técnica se caracteriza por su simplicidad y eficiencia, comenzando siempre en la celda superior izquierda (esquina noroeste) de la matriz de costos y avanzando sistemáticamente para asignar recursos de manera óptima.</p>
+                                        <p class="card-text">Este método es especialmente eficiente para asignar <strong>n</strong> tareas a <strong>n</strong> agentes minimizando el costo total, garantizando que cada tarea sea asignada exactamente a un agente y cada agente reciba exactamente una tarea.</p>
                                         
                                         <div class="mt-4">
                                             <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary">
@@ -165,65 +165,39 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 text-center">
-                                        <div class="method-visual">
-                                            <div class="grid-container">
-                                                <div class="grid-cell start-cell">Inicio</div>
-                                                <div class="grid-arrow">→</div>
-                                                <div class="grid-cell">Asignación</div>
-                                                <div class="grid-arrow">→</div>
-                                                <div class="grid-cell end-cell">Solución</div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </section>
                     
-                    <!-- Pasos del método -->
-                    <section id="pasos" class="content-section">
+                    <!-- Algoritmo -->
+                    <section id="algoritmo" class="content-section">
                         <div class="section-header mb-4">
                             <span class="section-badge">02</span>
-                            <h2 class="section-title">Pasos del método</h2>
+                            <h2 class="section-title">Pasos del algoritmo Húngaro</h2>
                         </div>
                         <div class="card step-card">
                             <div class="card-body p-4">
-                                <div class="steps-container">
-                                    <div class="step-item">
-                                        <div class="step-number">1</div>
-                                        <div class="step-content">
-                                            <h5>Inicio en la esquina noroeste</h5>
-                                            <p>Comience en la celda superior izquierda de la matriz de transporte</p>
-                                        </div>
+                                <div class="hungarian-algorithm">
+                                    <div class="algorithm-step">
+                                        <h5 class="step-title"><i class="bi bi-1-circle"></i> Paso 1: Reducción de filas</h5>
+                                        <p>Restar el elemento mínimo de cada fila a todos los elementos de esa fila.</p>
                                     </div>
-                                    <div class="step-item">
-                                        <div class="step-number">2</div>
-                                        <div class="step-content">
-                                            <h5>Asignación minima</h5>
-                                            <p>Asigne la menor cantidad posible sin exceder oferta ni demanda</p>
-                                        </div>
+                                    <div class="algorithm-step">
+                                        <h5 class="step-title"><i class="bi bi-2-circle"></i> Paso 2: Reducción de columnas</h5>
+                                        <p>Restar el elemento mínimo de cada columna a todos los elementos de esa columna.</p>
                                     </div>
-                                    <div class="step-item">
-                                        <div class="step-number">3</div>
-                                        <div class="step-content">
-                                            <h5>Ajuste de valores</h5>
-                                            <p>Actualice la oferta y demanda restando la cantidad asignada</p>
-                                        </div>
+                                    <div class="algorithm-step">
+                                        <h5 class="step-title"><i class="bi bi-3-circle"></i> Paso 3: Cobertura de ceros</h5>
+                                        <p>Cubrir todos los ceros con el mínimo número de líneas (filas o columnas).</p>
                                     </div>
-                                    <div class="step-item">
-                                        <div class="step-number">4</div>
-                                        <div class="step-content">
-                                            <h5>Movimiento estratégico</h5>
-                                            <p>Desplácese a la derecha o hacia abajo según la disponibilidad</p>
-                                        </div>
+                                    <div class="algorithm-step">
+                                        <h5 class="step-title"><i class="bi bi-4-circle"></i> Paso 4: Prueba de optimalidad</h5>
+                                        <p>Si el número de líneas es igual a n, se ha encontrado la asignación óptima.</p>
                                     </div>
-                                    <div class="step-item">
-                                        <div class="step-number">5</div>
-                                        <div class="step-content">
-                                            <h5>Repetición del proceso</h5>
-                                            <p>Continue hasta satisfacer todas las ofertas y demandas</p>
-                                        </div>
+                                    <div class="algorithm-step">
+                                        <h5 class="step-title"><i class="bi bi-5-circle"></i> Paso 5: Ajuste de la matriz</h5>
+                                        <p>Si no se cumple la condición anterior, encontrar el mínimo elemento no cubierto y ajustar la matriz.</p>
                                     </div>
                                 </div>
                             </div>
@@ -238,67 +212,89 @@
                         </div>
                         <div class="card">
                             <div class="card-body p-4">
-                                <p class="lead">Supongamos que tenemos 2 fábricas (orígenes) y 3 tiendas (destinos) con los siguientes costos de transporte:</p>
+                                <p class="lead">Supongamos que tenemos 3 trabajadores y 3 tareas con los siguientes costos de asignación:</p>
                                 
-                                <div class="table-responsive example-table mb-4">
-                                    <table class="table table-custom">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>Tienda A</th>
-                                                <th>Tienda B</th>
-                                                <th>Tienda C</th>
-                                                <th class="text-center bg-light">Oferta</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th class="bg-light">Fábrica 1</th>
-                                                <td class="highlight-cell">5</td>
-                                                <td>4</td>
-                                                <td>3</td>
-                                                <td class="text-center fw-bold bg-light">100</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light">Fábrica 2</th>
-                                                <td>8</td>
-                                                <td>4</td>
-                                                <td>3</td>
-                                                <td class="text-center fw-bold bg-light">200</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-center bg-light">Demanda</th>
-                                                <td class="text-center fw-bold bg-light">80</td>
-                                                <td class="text-center fw-bold bg-light">120</td>
-                                                <td class="text-center fw-bold bg-light">100</td>
-                                                <td class="bg-light"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="matrix-step">
+                                    <h6 class="step-title">Matriz de costos inicial:</h6>
+                                    <div class="matrix-container">
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">9</div>
+                                            <div class="matrix-cell">2</div>
+                                            <div class="matrix-cell">7</div>
+                                        </div>
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">6</div>
+                                            <div class="matrix-cell">4</div>
+                                            <div class="matrix-cell">3</div>
+                                        </div>
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">5</div>
+                                            <div class="matrix-cell">8</div>
+                                            <div class="matrix-cell">1</div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div class="solution-process">
-                                    <h5 class="process-title">Proceso de solución paso a paso:</h5>
+                                <div class="matrix-step">
+                                    <h6 class="step-title">Después de reducción de filas:</h6>
+                                    <div class="matrix-container">
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">7</div>
+                                            <div class="matrix-cell">0</div>
+                                            <div class="matrix-cell">5</div>
+                                        </div>
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">3</div>
+                                            <div class="matrix-cell">1</div>
+                                            <div class="matrix-cell">0</div>
+                                        </div>
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">4</div>
+                                            <div class="matrix-cell">7</div>
+                                            <div class="matrix-cell">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="matrix-step">
+                                    <h6 class="step-title">Después de reducción de columnas:</h6>
+                                    <div class="matrix-container">
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">4</div>
+                                            <div class="matrix-cell zero-cell">0</div>
+                                            <div class="matrix-cell">5</div>
+                                        </div>
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">0</div>
+                                            <div class="matrix-cell">1</div>
+                                            <div class="matrix-cell zero-cell">0</div>
+                                        </div>
+                                        <div class="matrix-row">
+                                            <div class="matrix-cell">1</div>
+                                            <div class="matrix-cell">7</div>
+                                            <div class="matrix-cell zero-cell">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="solution-process mt-4">
+                                    <h5 class="process-title">Asignación óptima encontrada:</h5>
                                     <div class="process-steps">
                                         <div class="process-step">
                                             <span class="step-marker">1</span>
-                                            <p>Asignamos 80 unidades de Fábrica 1 a Tienda A (mínimo entre 100 y 80)</p>
+                                            <p>Trabajador 1 → Tarea 2 (Costo: 2)</p>
                                         </div>
                                         <div class="process-step">
                                             <span class="step-marker">2</span>
-                                            <p>Ajustamos: Oferta F1 = 20, Demanda TA = 0. Movemos a Tienda B</p>
+                                            <p>Trabajador 2 → Tarea 1 (Costo: 6)</p>
                                         </div>
                                         <div class="process-step">
                                             <span class="step-marker">3</span>
-                                            <p>Asignamos 20 unidades de F1 a TB (mínimo entre 20 y 120)</p>
+                                            <p>Trabajador 3 → Tarea 3 (Costo: 1)</p>
                                         </div>
                                         <div class="process-step">
-                                            <span class="step-marker">4</span>
-                                            <p>Ajustamos: Oferta F1 = 0, Demanda TB = 100. Movemos a Fábrica 2</p>
-                                        </div>
-                                        <div class="process-step">
-                                            <span class="step-marker">5</span>
-                                            <p>Continuamos el proceso hasta satisfacer toda la demanda</p>
+                                            <span class="step-marker">Σ</span>
+                                            <p><strong>Costo total mínimo: 9</strong></p>
                                         </div>
                                     </div>
                                 </div>
@@ -306,11 +302,11 @@
                         </div>
                     </section>
                     
-                    <!-- Ventajas -->
-                    <section id="ventajas" class="content-section">
+                    <!-- Aplicaciones -->
+                    <section id="aplicaciones" class="content-section">
                         <div class="section-header mb-4">
                             <span class="section-badge">04</span>
-                            <h2 class="section-title">Ventajas del método</h2>
+                            <h2 class="section-title">Aplicaciones del método Húngaro</h2>
                         </div>
                         <div class="card">
                             <div class="card-body p-4">
@@ -318,30 +314,80 @@
                                     <div class="col-md-4">
                                         <div class="feature-card text-center p-3 h-100">
                                             <div class="feature-icon">
-                                                <i class="bi bi-lightning-charge"></i>
+                                                <i class="bi bi-people"></i>
                                             </div>
-                                            <h5>Simple y rápido</h5>
-                                            <p class="text-muted">Fácil de implementar sin necesidad de cálculos complejos, ideal para soluciones inmediatas</p>
+                                            <h5>Asignación de personal</h5>
+                                            <p class="text-muted">Optimizar la asignación de empleados a proyectos según sus habilidades y costos</p>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="feature-card text-center p-3 h-100">
                                             <div class="feature-icon">
-                                                <i class="bi bi-check2-circle"></i>
+                                                <i class="bi bi-truck"></i>
                                             </div>
-                                            <h5>Garantiza solución factible</h5>
-                                            <p class="text-muted">Siempre encuentra una solución inicial factible para cualquier problema balanceado</p>
+                                            <h5>Logística y transporte</h5>
+                                            <p class="text-muted">Asignar vehículos a rutas minimizando costos de combustible y tiempo</p>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="feature-card text-center p-3 h-100">
                                             <div class="feature-icon">
-                                                <i class="bi bi-arrow-left-right"></i>
+                                                <i class="bi bi-cpu"></i>
                                             </div>
-                                            <h5>Base para mejoras</h5>
-                                            <p class="text-muted">Sirve como punto de partida ideal para métodos de optimización más avanzados</p>
+                                            <h5>Procesamiento de tareas</h5>
+                                            <p class="text-muted">Asignar tareas a procesadores en sistemas distribuidos</p>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Comparación -->
+                    <section id="comparacion" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">05</span>
+                            <h2 class="section-title">Ventajas del método Húngaro</h2>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <div class="table-responsive">
+                                    <table class="table table-comparison">
+                                        <thead>
+                                            <tr>
+                                                <th>Característica</th>
+                                                <th>Métodos Heurísticos</th>
+                                                <th>Método Húngaro</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Optimalidad</td>
+                                                <td>Solución aproximada</td>
+                                                <td>Solución óptima garantizada</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Complejidad temporal</td>
+                                                <td>O(n²) a O(n³)</td>
+                                                <td>O(n³)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Aplicabilidad</td>
+                                                <td>Problemas generales</td>
+                                                <td>Problemas de asignación cuadrados</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Facilidad de implementación</td>
+                                                <td>Simple</td>
+                                                <td>Moderada</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Garantía de optimalidad</td>
+                                                <td>No garantizada</td>
+                                                <td>Garantizada</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -350,17 +396,17 @@
                     <!-- Call to Action -->
                     <section class="content-section text-center py-5">
                         <div class="cta-card">
-                            <h3 class="cta-title">¿Listo para resolver tu problema de transporte?</h3>
-                            <p class="cta-subtitle">Nuestra herramienta calculará automáticamente la solución óptima usando el método de la Esquina Noroeste</p>
+                            <h3 class="cta-title">¿Listo para resolver problemas de asignación óptima?</h3>
+                            <p class="cta-subtitle">Nuestra herramienta implementa el método Húngaro para encontrar la solución óptima a tus problemas de asignación</p>
                             <div class="cta-buttons">
                                 <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-lg px-5 py-3">
                                     <i class="bi bi-calculator-fill me-2"></i> Comenzar Ahora
                                 </a>
                             </div>
                             <div class="cta-features mt-4">
-                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Instantáneo</span>
-                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Preciso</span>
-                                <span class="badge bg-light text-dark"><i class="bi bi-check me-1"></i>Gratuito</span>
+                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Solución Óptima</span>
+                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Algoritmo Eficiente</span>
+                                <span class="badge bg-light text-dark"><i class="bi bi-check me-1"></i>Garantía Matemática</span>
                             </div>
                         </div>
                     </section>
@@ -374,7 +420,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; 2024 Método de la Esquina Noroeste. Todos los derechos reservados.</p>
+                    <p class="mb-0">&copy; 2024 Método Húngaro. Todos los derechos reservados.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-light btn-sm">

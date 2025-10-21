@@ -1,0 +1,449 @@
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --secondary-color: #e74c3c;
+    --accent-color: #9b59b6;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --light-bg: #f8f9fa;
+    --dark-bg: #212529;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e7ec 100%);
+    min-height: 100vh;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background: white;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.summary-card .card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+}
+
+.solution-card .card-header {
+    background: linear-gradient(135deg, var(--success-color), #2ecc71) !important;
+}
+
+.steps-card .card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+}
+
+/* Tables */
+.table-hungarian {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+}
+
+.table-hungarian th {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    text-align: center;
+    border: none;
+}
+
+.table-hungarian td {
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid #e9ecef;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.table-hungarian tbody tr:hover td {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+.assignment-cell {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(46, 204, 113, 0.1)) !important;
+    font-weight: 600;
+    color: var(--success-color);
+    position: relative;
+}
+
+.assignment-mark {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: var(--success-color);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Steps Container */
+.steps-container {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.steps-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.steps-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.steps-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.steps-container::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+.step-item {
+    background: var(--light-bg);
+    border-left: 4px solid var(--primary-color) !important;
+    transition: all 0.3s ease;
+}
+
+.step-item:hover {
+    background: white;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, var(--success-color), #2ecc71) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, var(--warning-color), #e67e22) !important;
+}
+
+.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #2c9faf) !important;
+}
+
+/* Assignment Details */
+.assignment-details {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(155, 89, 182, 0.05));
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+}
+
+.assignment-item {
+    background: white;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.assignment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Total Cost Box */
+.total-cost-box {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.05));
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 2px dashed rgba(39, 174, 96, 0.3);
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+    background: linear-gradient(135deg, var(--primary-dark), var(--accent-color));
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* Matrix Tables in Steps */
+.table-responsive .table-sm td {
+    padding: 0.5rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+/* Estilos para ecuaciones dentro de las celdas: a - b = c */
+.equation {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.equation .eq-left,
+.equation .eq-min,
+.equation .eq-equals,
+.equation .eq-op {
+    display: inline-block;
+}
+
+.equation .eq-left {
+    min-width: 28px;
+    text-align: right;
+    color: var(--text-dark);
+}
+
+.equation .eq-op {
+    width: 18px;
+    text-align: center;
+    color: #6c757d;
+    font-weight: 700;
+}
+
+.equation .eq-min {
+    min-width: 24px;
+    text-align: left;
+    color: #6c757d;
+}
+
+.equation .eq-equals {
+    width: 14px;
+    text-align: center;
+    color: #6c757d;
+}
+
+.equation .eq-result {
+    min-width: 28px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.12), rgba(46, 204, 113, 0.08));
+    color: #1f7a3a;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 800;
+}
+
+/* Alineación vertical en celdas pequeñas */
+.matrix-table td .equation {
+    padding: 4px 6px;
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.step-item {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table-hungarian th,
+    .table-hungarian td {
+        padding: 0.5rem;
+    }
+    
+    .steps-container {
+        max-height: 400px;
+    }
+    
+    .assignment-details .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .assignment-item {
+        min-width: 100%;
+    }
+    
+    .total-cost-box h2 {
+        font-size: 2rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .btn-group {
+        display: none;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .steps-container {
+        max-height: none;
+        overflow: visible;
+    }
+}
+
+/* Estilos para matrices con líneas */
+.matrix-with-lines {
+    position: relative;
+}
+
+.matrix-table td {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Líneas horizontales */
+.horizontal-line {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 193, 7, 0.1) 50%, transparent 100%);
+    border-bottom: 2px solid #ffc107;
+    border-top: 2px solid #ffc107;
+}
+
+/* Líneas verticales */
+.vertical-line {
+    background: linear-gradient(180deg, transparent 0%, rgba(13, 110, 253, 0.1) 50%, transparent 100%);
+    border-left: 2px solid #0d6efd;
+    border-right: 2px solid #0d6efd;
+}
+
+/* Intersección de líneas */
+.intersection {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(13, 110, 253, 0.2) 100%);
+    border: 2px solid #6610f2 !important;
+}
+
+/* Celdas con cero */
+.zero-cell {
+    background-color: rgba(25, 135, 84, 0.1);
+    font-weight: bold;
+    color: #198754;
+}
+
+.zero-mark {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #198754;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    line-height: 20px;
+    margin-left: 5px;
+}
+
+/* Leyenda de líneas */
+.lines-legend {
+    font-size: 0.8rem;
+}
+
+.legend-item {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 15px;
+    height: 3px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.horizontal-demo {
+    background: #ffc107;
+    border: none;
+}
+
+.vertical-demo {
+    background: #0d6efd;
+    border: none;
+}
+
+/* Animaciones para nuevos elementos */
+@keyframes highlightLine {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.horizontal-line, .vertical-line {
+    animation: highlightLine 0.5s ease-in-out;
+}
+
+/* Mejoras responsive */
+@media (max-width: 768px) {
+    .matrix-with-lines .matrix-table {
+        font-size: 0.75rem;
+    }
+    
+    .matrix-table td {
+        padding: 0.3rem;
+    }
+    
+    .zero-mark {
+        width: 16px;
+        height: 16px;
+        font-size: 0.6rem;
+        line-height: 16px;
+    }
+}

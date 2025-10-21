@@ -30,3 +30,17 @@ def mul(value, arg):
         return float(value) * float(arg)
     except (ValueError, TypeError):
         return ''
+
+
+@register.filter
+def format_sub(value, arg):
+    """Return a string like 'a - b = c' where a=value and b=arg.
+
+    If either is not numeric, returns empty string.
+    """
+    try:
+        a = int(value)
+        b = int(arg)
+        return f"{a} - {b} = {a - b}"
+    except (ValueError, TypeError):
+        return ''

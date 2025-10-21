@@ -19,7 +19,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
                 <i class="bi bi-graph-up-arrow me-2"></i>Solucionador de Transporte
@@ -43,6 +43,11 @@
                             <li>
                                 <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
                                     <i class="bi bi-graph-down me-2"></i>Costo Mínimo
+                                </a>
+                            </li>
+                             <li>
+                                <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
+                                    <i class="bi bi-table"></i> Metodo Húngaro
                                 </a>
                             </li>
                         </ul>
@@ -81,103 +86,9 @@
                 </div>
             </div>
         </div>
-        <div class="hero-wave">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
-                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
-                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
-            </svg>
-        </div>
     </section>
 
-    <!-- Métodos Section -->
-    <section id="metodos" class="methods-section">
-        <div class="container">
-            <div class="section-header text-center mb-5">
-                <span class="section-badge">Métodos Disponibles</span>
-                <h2 class="section-title">Elije tu método de solución</h2>
-                <p class="section-subtitle">Selecciona el algoritmo que mejor se adapte a tus necesidades</p>
-            </div>
 
-            <div class="row g-4 justify-content-center">
-                <!-- Método Esquina Noroeste -->
-                <div class="col-lg-5">
-                    <div class="method-card fade-in northwest">
-                        <div class="method-image northwest-image"></div>
-                        <div class="method-icon">
-                            <i class="bi bi-grid-3x3-gap"></i>
-                        </div>
-                        <div class="method-header">
-                            <h3 class="method-title">Esquina Noroeste</h3>
-                            <span class="method-badge method-badge-basic">Básico</span>
-                        </div>
-                        <div class="method-body">
-                            <p class="method-description">
-                                Método simple y rápido para encontrar una solución inicial factible. Comienza en la esquina superior izquierda y avanza sistemáticamente.
-                            </p>
-                            <div class="method-features">
-                                <div class="feature-item">
-                                    <i class="bi bi-check-circle-fill text-primary"></i>
-                                    <span>Fácil de implementar</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="bi bi-check-circle-fill text-primary"></i>
-                                    <span>Garantiza solución factible</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="bi bi-check-circle-fill text-primary"></i>
-                                    <span>Ideal para iniciar</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="method-footer">
-                            <a href="{% url 'northwest_app:esquina_noroeste' %}" class="btn btn-outline-primary btn-lg w-100">
-                                <i class="bi bi-play-fill me-2"></i> Usar Esquina Noroeste
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Método Costo Mínimo -->
-                <div class="col-lg-5">
-                    <div class="method-card fade-in costo-minimo">
-                        <div class="method-image costo-minimo-image"></div>
-                        <div class="method-icon">
-                            <i class="bi bi-graph-down"></i>
-                        </div>
-                        <div class="method-header">
-                            <h3 class="method-title">Costo Mínimo</h3>
-                            <span class="method-badge method-badge-advanced">Avanzado</span>
-                        </div>
-                        <div class="method-body">
-                            <p class="method-description">
-                                Algoritmo optimizado que prioriza las rutas con menores costos, proporcionando soluciones iniciales de mejor calidad.
-                            </p>
-                            <div class="method-features">
-                                <div class="feature-item">
-                                    <i class="bi bi-check-circle-fill text-primary"></i>
-                                    <span>Menor costo inicial</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="bi bi-check-circle-fill text-primary"></i>
-                                    <span>Convergencia más rápida</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="bi bi-check-circle-fill text-primary"></i>
-                                    <span>Resultados optimizados</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="method-footer">
-                            <a href="{% url 'northwest_app:costo_minimo' %}" class="btn btn-primary btn-lg w-100">
-                                <i class="bi bi-lightning-fill me-2"></i> Usar Costo Mínimo
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="footer">
