@@ -1,4 +1,4 @@
-# hungarian_method.py - VERSIÓN COMPLETA CORREGIDA
+# hungarian_method.py 
 
 class HungarianMethod:
     @staticmethod
@@ -186,17 +186,17 @@ class HungarianMethod:
             allocation_mask[i][j] = True
 
         return {
-            'allocations': allocations,
-            'allocation_mask': allocation_mask,
-            'total_cost': total_cost,
-            'assignment': filtered_assignment,
-            'raw_assignment': assignment,
-            'steps': steps,
-            'original_costs': original_costs,
-            'padded_costs': costs,
-            'reduced_matrix': matrix
+            'allocations': allocations,           # Asignaciones
+            'allocation_mask': allocation_mask,   # Máscara de asignación
+            'total_cost': total_cost,             # Total de costos
+            'assignment': filtered_assignment,    # Asignación filtrada
+            'raw_assignment': assignment,         # Asignación completa
+            'steps': steps,                       # Pasos detallados
+            'original_costs': original_costs,     # Costos Originales
+            'padded_costs': costs,                # Costos
+            'reduced_matrix': matrix              # Matriz reducida
         }
-
+    # Método para encontrar la máxima asignación de ceros
     @staticmethod
     def _find_max_assignment(matrix):
         """Encuentra la máxima asignación posible de ceros usando enfoque greedy"""
