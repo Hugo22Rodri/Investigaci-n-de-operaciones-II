@@ -77,14 +77,14 @@
                             <tr>
                                 <th></th>
                                 {% for j in range_cols %}
-                                <th scope="col">Tarea {{ forloop.counter }}</th>
+                                <th scope="col">Recursos {{ forloop.counter }}</th>
                                 {% endfor %}
                             </tr>
                         </thead>
                         <tbody>
                             {% for i in range_rows %}
                             <tr>
-                                <th>Persona {{ forloop.counter }}</th>
+                                <th>Entidades {{ forloop.counter }}</th>
                                 {% for j in range_cols %}
                                 <td>
                                     {{ original_costs|index:i|index:j }}
