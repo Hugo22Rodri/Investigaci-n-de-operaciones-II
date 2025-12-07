@@ -1,0 +1,458 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Método de Vogel - Solución de Problemas de Transporte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'northwest_app/style-index.css' %}">
+    <style>
+        /* Estilos adicionales para asegurar funcionalidad */
+        .btn-light, .btn-outline-light {
+            cursor: pointer !important;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Asegurar que los enlaces sean clickeables */
+        a[href]:not(.nav-link) {
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        /* Prevenir interferencias de otros estilos */
+        .hero-buttons a {
+            pointer-events: auto !important;
+        }
+        
+        /* Estilos específicos para Vogel */
+        .penalty-cell {
+            background-color: #e7f3ff !important;
+            font-weight: bold;
+        }
+        
+        .selected-cell {
+            background-color: #d4edda !important;
+            border: 2px solid #28a745 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-graph-up-arrow me-2"></i>Método de Vogel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#introduccion">Introducción</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pasos">Pasos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ejemplo">Ejemplo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ventajas">Ventajas</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-diagram-3 me-1"></i>Métodos
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'northwest_app:index' %}">
+                                <i class="bi bi-house me-2"></i>Inicio
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'northwest_app:esquina_noroeste' %}">
+                                <i class="bi bi-grid-3x3-gap me-2"></i>Esquina Noroeste
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
+                                <i class="bi bi-graph-down me-2"></i>Costo Mínimo
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'northwest_app:hungaro' %}">
+                                <i class="bi bi-table"></i> Método Húngaro
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                    <li class="nav-item ms-2">
+                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-calculator me-1"></i>Usar Calculadora
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="hero-badge mb-3">Método de Optimización Avanzada</div>
+                    <h1 class="display-4 fw-bold mb-3 hero-title">
+                        <i class="bi bi-graph-up-arrow hero-icon"></i> Método de Vogel
+                    </h1>
+                    <p class="lead mb-4 hero-subtitle">Algoritmo de aproximación para encontrar soluciones iniciales de alta calidad en problemas de transporte</p>
+                    <div class="hero-buttons">
+                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-light btn-lg rounded-pill px-4 py-3 me-3" id="calcularBtn">
+                            <i class="bi bi-calculator me-2"></i> Calcular Ahora
+                        </a>
+                        <a href="#introduccion" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3" id="saberMasBtn">
+                            <i class="bi bi-book me-2"></i> Saber Más
+                        </a>
+                    </div>
+                    <div class="hero-stats mt-5">
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <div class="stat-item">
+                                    <i class="bi bi-bullseye"></i>
+                                    <span>Preciso</span>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="stat-item">
+                                    <i class="bi bi-star"></i>
+                                    <span>Eficiente</span>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="stat-item">
+                                    <i class="bi bi-award"></i>
+                                    <span>Óptimo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Introducción -->
+                    <section id="introduccion" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">01</span>
+                            <h2 class="section-title">¿Qué es el método de Vogel?</h2>
+                        </div>
+                        <div class="card feature-card">
+                            <div class="card-body p-4">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-8">
+                                        <p class="card-text fs-5">El método de Vogel, también conocido como método de aproximación de Vogel (VAM), es un algoritmo heurístico utilizado para encontrar una solución inicial de alta calidad en problemas de transporte. A diferencia de métodos más simples, VAM considera los costos de oportunidad al tomar decisiones de asignación.</p>
+                                        
+                                        <p class="card-text">Este método calcula penalizaciones para cada fila y columna basadas en la diferencia entre los dos costos más bajos, asignando recursos a las celdas con menor costo en aquellas filas o columnas con mayor penalización, lo que generalmente produce soluciones cercanas al óptimo.</p>
+                                        
+                                        <div class="mt-4">
+                                            <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary">
+                                                <i class="bi bi-calculator me-2"></i>Probar el Método
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 text-center">
+                                        <div class="method-visual">
+                                            <div class="grid-container">
+                                                <div class="grid-cell start-cell">Calcular Penalizaciones</div>
+                                                <div class="grid-arrow">↓</div>
+                                                <div class="grid-cell">Seleccionar Mayor Penalización</div>
+                                                <div class="grid-arrow">↓</div>
+                                                <div class="grid-cell end-cell">Asignar Mínimo Costo</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Pasos del método -->
+                    <section id="pasos" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">02</span>
+                            <h2 class="section-title">Pasos del método</h2>
+                        </div>
+                        <div class="card step-card">
+                            <div class="card-body p-4">
+                                <div class="steps-container">
+                                    <div class="step-item">
+                                        <div class="step-number">1</div>
+                                        <div class="step-content">
+                                            <h5>Calcular penalizaciones</h5>
+                                            <p>Para cada fila y columna, calcule la diferencia entre los dos costos más bajos (penalización)</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">2</div>
+                                        <div class="step-content">
+                                            <h5>Identificar máxima penalización</h5>
+                                            <p>Seleccione la fila o columna con la penalización más alta</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">3</div>
+                                        <div class="step-content">
+                                            <h5>Asignar al menor costo</h5>
+                                            <p>En la fila/columna seleccionada, asigne a la celda con el costo más bajo</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">4</div>
+                                        <div class="step-content">
+                                            <h5>Ajustar oferta y demanda</h5>
+                                            <p>Actualice los valores de oferta y demanda restando la cantidad asignada</p>
+                                        </div>
+                                    </div>
+                                    <div class="step-item">
+                                        <div class="step-number">5</div>
+                                        <div class="step-content">
+                                            <h5>Repetir el proceso</h5>
+                                            <p>Continúe hasta satisfacer todas las ofertas y demandas</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Ejemplo -->
+                    <section id="ejemplo" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">03</span>
+                            <h2 class="section-title">Ejemplo ilustrativo</h2>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <p class="lead">Supongamos que tenemos 3 fábricas (orígenes) y 4 almacenes (destinos) con los siguientes costos de transporte:</p>
+                                
+                                <div class="table-responsive example-table mb-4">
+                                    <table class="table table-custom">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Almacén A</th>
+                                                <th>Almacén B</th>
+                                                <th>Almacén C</th>
+                                                <th>Almacén D</th>
+                                                <th class="text-center bg-light">Oferta</th>
+                                                <th class="text-center penalty-cell">Penalización</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-light">Fábrica 1</th>
+                                                <td>6</td>
+                                                <td class="selected-cell">8</td>
+                                                <td>10</td>
+                                                <td>9</td>
+                                                <td class="text-center fw-bold bg-light">35</td>
+                                                <td class="text-center fw-bold penalty-cell">2</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Fábrica 2</th>
+                                                <td>5</td>
+                                                <td>2</td>
+                                                <td>8</td>
+                                                <td>7</td>
+                                                <td class="text-center fw-bold bg-light">50</td>
+                                                <td class="text-center fw-bold penalty-cell">3</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Fábrica 3</th>
+                                                <td>6</td>
+                                                <td>7</td>
+                                                <td>10</td>
+                                                <td>8</td>
+                                                <td class="text-center fw-bold bg-light">40</td>
+                                                <td class="text-center fw-bold penalty-cell">1</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center bg-light">Demanda</th>
+                                                <td class="text-center fw-bold bg-light">30</td>
+                                                <td class="text-center fw-bold bg-light">25</td>
+                                                <td class="text-center fw-bold bg-light">35</td>
+                                                <td class="text-center fw-bold bg-light">35</td>
+                                                <td class="bg-light"></td>
+                                                <td class="penalty-cell"></td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center penalty-cell">Penalización</th>
+                                                <td class="text-center fw-bold penalty-cell">1</td>
+                                                <td class="text-center fw-bold penalty-cell">5</td>
+                                                <td class="text-center fw-bold penalty-cell">2</td>
+                                                <td class="text-center fw-bold penalty-cell">1</td>
+                                                <td class="penalty-cell"></td>
+                                                <td class="penalty-cell"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="solution-process">
+                                    <h5 class="process-title">Proceso de solución paso a paso:</h5>
+                                    <div class="process-steps">
+                                        <div class="process-step">
+                                            <span class="step-marker">1</span>
+                                            <p>Calculamos penalizaciones: Columna B tiene la mayor penalización (5)</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">2</span>
+                                            <p>En columna B, el costo mínimo es 2 (Fábrica 2)</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">3</span>
+                                            <p>Asignamos 25 unidades de Fábrica 2 a Almacén B (mínimo entre 50 y 25)</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">4</span>
+                                            <p>Ajustamos: Oferta F2 = 25, Demanda AB = 0. Recalculamos penalizaciones</p>
+                                        </div>
+                                        <div class="process-step">
+                                            <span class="step-marker">5</span>
+                                            <p>Continuamos el proceso hasta satisfacer toda la demanda</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Ventajas -->
+                    <section id="ventajas" class="content-section">
+                        <div class="section-header mb-4">
+                            <span class="section-badge">04</span>
+                            <h2 class="section-title">Ventajas del método</h2>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <div class="feature-card text-center p-3 h-100">
+                                            <div class="feature-icon">
+                                                <i class="bi bi-bullseye"></i>
+                                            </div>
+                                            <h5>Alta precisión</h5>
+                                            <p class="text-muted">Proporciona soluciones iniciales muy cercanas al óptimo, reduciendo iteraciones posteriores</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="feature-card text-center p-3 h-100">
+                                            <div class="feature-icon">
+                                                <i class="bi bi-lightning-charge"></i>
+                                            </div>
+                                            <h5>Eficiencia mejorada</h5>
+                                            <p class="text-muted">Considera costos de oportunidad, lo que lleva a mejores decisiones de asignación</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="feature-card text-center p-3 h-100">
+                                            <div class="feature-icon">
+                                                <i class="bi bi-graph-up-arrow"></i>
+                                            </div>
+                                            <h5>Óptimo frecuente</h5>
+                                            <p class="text-muted">En muchos casos encuentra directamente la solución óptima sin necesidad de mejoras</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 pt-3 border-top">
+                                    <h5 class="mb-3">Consideraciones:</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                                <div>
+                                                    <h6 class="mb-1">Ventaja</h6>
+                                                    <p class="text-muted mb-0">Generalmente produce mejores soluciones iniciales que Esquina Noroeste o Costo Mínimo</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-exclamation-triangle-fill text-warning me-2 mt-1"></i>
+                                                <div>
+                                                    <h6 class="mb-1">Consideración</h6>
+                                                    <p class="text-muted mb-0">Requiere más cálculos que métodos más simples, aunque sigue siendo eficiente</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Call to Action -->
+                    <section class="content-section text-center py-5">
+                        <div class="cta-card">
+                            <h3 class="cta-title">¿Listo para optimizar tu problema de transporte?</h3>
+                            <p class="cta-subtitle">Nuestra herramienta calculará automáticamente la solución usando el método de Vogel para obtener resultados de alta calidad</p>
+                            <div class="cta-buttons">
+                                <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-lg px-5 py-3">
+                                    <i class="bi bi-calculator-fill me-2"></i> Comenzar Ahora
+                                </a>
+                            </div>
+                            <div class="cta-features mt-4">
+                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Preciso</span>
+                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Eficiente</span>
+                                <span class="badge bg-light text-dark"><i class="bi bi-check me-1"></i>Gratuito</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 Método de Vogel. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-calculator me-1"></i> Usar Calculadora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'northwest_app/js/page-nav.js' %}" defer></script>
+    <script src="{% static 'northwest_app/js/global.js' %}" defer></script>
+</body>
+</html>

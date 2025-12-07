@@ -6,6 +6,8 @@ from .models import TransportationProblem, Solution
 from .services.northwest_corner_service import NorthwestCornerService
 from .services.minimum_cost_service import MinimumCostService
 from .services.hungarian_method import HungarianMethod
+from .services.modi_method import apply_modi_improvement
+from .services.vogel_method import VogelMethod
 from types import SimpleNamespace
 import json
 class IndexView(TemplateView):
@@ -19,6 +21,9 @@ class CostoMinimoView(TemplateView):
 
 class MetodoHungaroView(TemplateView):
     template_name = 'northwest_app/hungaro.html'
+
+class MetodoVogelView(TemplateView):
+    template_name = 'northwest_app/vogel.html'
 
 class SetupProblemView(FormView):
     template_name = 'northwest_app/setup.html'
@@ -47,6 +52,21 @@ class DataInputView(FormView):
         self.problem_data = request.session.get('problem_data')
         if not self.problem_data:
             return redirect('northwest_app:setup')
+        
+        # Detectar cambio de método: si viene POST con solo 'method' y sin datos de costo
+        if request.method == 'POST':
+            has_method_only = 'method' in request.POST
+            has_cost_data = any(key.startswith('cost_') for key in request.POST.keys())
+            
+            # Si es un cambio de método puro (sin datos de costos), cambiar y recargar
+            if has_method_only and not has_cost_data:
+                new_method = request.POST.get('method')
+                valid_methods = [choice[0] for choice in TransportationProblem.METHOD_CHOICES]
+                if new_method in valid_methods:
+                    self.problem_data['method'] = new_method
+                    request.session['problem_data'] = self.problem_data
+                    return redirect('northwest_app:data_input')
+        
         return super().dispatch(request, *args, **kwargs)
     
     def get_form_kwargs(self):
@@ -56,20 +76,33 @@ class DataInputView(FormView):
         # Si el método seleccionado es Húngaro, no incluir campos de ofertas/demandas
         method = self.problem_data.get('method')
         kwargs['include_supplies_demands'] = False if method == 'hungarian' else True
+        
+        # Recuperar datos guardados de session si existen
+        form_data = self.request.session.get('form_data', {})
+        if form_data and self.request.method == 'GET':
+            # Prepoblar con datos de session en una petición GET (cambio de método)
+            kwargs['data'] = form_data
+        
         return kwargs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Recuperar datos guardados de session
+        form_data = self.request.session.get('form_data', {})
+        
         context.update({
             'origins': self.problem_data['origins'],
             'destinations': self.problem_data['destinations'],
             'is_balanced': self.problem_data['is_balanced'],
+            'current_method': self.problem_data.get('method', 'northwest'),
             # Rangos
             'range_rows': range(self.problem_data['origins']),
             'range_cols': range(self.problem_data['destinations']),
             # Indica si mostrar inputs de ofertas y demandas
             'include_supplies_demands': False if self.problem_data.get('method') == 'hungarian' else True,
-
+            # Datos guardados del formulario
+            'form_data': form_data,
         })
         return context
     
@@ -84,11 +117,25 @@ class DataInputView(FormView):
             supplies = []
             demands = []
         else:
-            supplies = [form.cleaned_data[f'supply_{i}'] for i in range(origins)]
-            demands = [form.cleaned_data[f'demand_{j}'] for j in range(destinations)]
+            supplies = [float(form.cleaned_data[f'supply_{i}']) for i in range(origins)]
+            demands = [float(form.cleaned_data[f'demand_{j}']) for j in range(destinations)]
 
-        costs = [[form.cleaned_data[f'cost_{i}_{j}'] for j in range(destinations)] 
+        costs = [[float(form.cleaned_data[f'cost_{i}_{j}']) for j in range(destinations)] 
                 for i in range(origins)]
+        
+        # Guardar los datos del formulario en session para poder cambiar de método después
+        form_data = {}
+        if method != 'hungarian':
+            for i in range(origins):
+                form_data[f'supply_{i}'] = supplies[i]
+            for j in range(destinations):
+                form_data[f'demand_{j}'] = demands[j]
+        for i in range(origins):
+            for j in range(destinations):
+                form_data[f'cost_{i}_{j}'] = costs[i][j]
+        
+        self.request.session['form_data'] = form_data
+        self.request.session.modified = True
         
         # Guardar el problema
         if 'method' not in self.problem_data:
@@ -110,6 +157,8 @@ class DataInputView(FormView):
         # Resolver el problema usando el servicio apropiado
         if method == 'minimum_cost':
             solution_data = MinimumCostService.solve(problem)
+        elif method == 'vogel':
+            solution_data = VogelMethod.solve(problem)
         elif method == 'northwest':
             solution_data = NorthwestCornerService.solve(problem)
         elif method == 'hungarian':
@@ -141,6 +190,8 @@ class DataInputView(FormView):
             return ['northwest_app/data_input_costo_minimo.html']
         elif method == 'hungarian':
             return ['northwest_app/data_input_hungaro.html']
+        elif method == 'vogel':
+            return ['northwest_app/data_input_vogel.html']
         else:
             return ['northwest_app/data_input.html']
 
@@ -169,6 +220,8 @@ class ResultsView(DetailView):
             return ['northwest_app/results.html']
         elif problem.method == 'hungarian':
             return ['northwest_app/hungarian_results.html'] 
+        elif problem.method == 'vogel':
+            return ['northwest_app/vogel_results.html']
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -338,6 +391,70 @@ class DiagramResultsView(DetailView):
             'range_destinations': range(problem.destinations),
         })
         
+        return context
+
+
+class ModiResultsView(DetailView):
+    """Muestra los cálculos del método de multiplicadores (MODI) sobre la solución
+    ya calculada (toma allocations desde Solution)."""
+    model = TransportationProblem
+    template_name = 'northwest_app/modi_results.html'
+    context_object_name = 'problem'
+    pk_url_kwarg = 'problem_id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        problem = self.object
+        solution = get_object_or_404(Solution, problem=problem)
+
+        # Elegir costos y allocations ajustados si existen
+        costs = solution.adjusted_costs if solution.adjusted_costs else problem.costs
+        allocations = solution.allocations
+
+        # Asegurar tamaños coherentes
+        # Llamar al servicio MODI
+        modi_info = apply_modi_improvement(costs, allocations)
+
+        # Construir una matriz específica para mostrar en la plantilla MODI
+        cycle_nodes = modi_info.get('cycle') or []
+        cycle_set = set(cycle_nodes)
+        entering = modi_info.get('entering')
+        new_alloc = modi_info.get('new_allocations') or allocations
+
+        modi_matrix = []
+        rows_m = len(costs)
+        cols_m = len(costs[0]) if rows_m > 0 else 0
+        for i in range(rows_m):
+            row = []
+            for j in range(cols_m):
+                row.append({
+                    'before': allocations[i][j],
+                    'after': new_alloc[i][j] if new_alloc else None,
+                    'cost': costs[i][j],
+                    'in_cycle': (i, j) in cycle_set,
+                    'is_entering': (entering == (i, j))
+                })
+            modi_matrix.append(row)
+
+        context.update({
+            'costs': costs,
+            'allocations': allocations,
+            'u': modi_info.get('u'),
+            'v': modi_info.get('v'),
+            'deltas': modi_info.get('deltas'),
+            'entering': entering,
+            'is_optimal': modi_info.get('is_optimal'),
+            'most_negative': modi_info.get('most_negative'),
+            'improved': modi_info.get('improved'),
+            'new_allocations': modi_info.get('new_allocations'),
+            'new_total_cost': modi_info.get('new_total_cost'),
+            'cycle': modi_info.get('cycle'),
+            'min_adjust': modi_info.get('min_adjust'),
+            'modi_matrix': modi_matrix,
+            'range_rows': range(rows_m),
+            'range_cols': range(cols_m),
+        })
+
         return context
 class HistoryView(ListView):
     model = TransportationProblem

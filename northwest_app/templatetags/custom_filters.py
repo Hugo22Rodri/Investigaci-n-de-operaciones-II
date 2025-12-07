@@ -44,3 +44,29 @@ def format_sub(value, arg):
         return f"{a} - {b} = {a - b}"
     except (ValueError, TypeError):
         return ''
+
+
+@register.filter
+def cell_class(cell):
+    """Devuelve clases CSS para una celda de la matriz usada en plantillas Vogel.
+
+    - Si la celda fue operada en un paso, devuelve clases para resaltarla.
+    - Si es ficticia, añade estilo en cursiva/tono claro.
+    - Si la celda tiene allocation == 0, añade una clase ligera.
+    """
+    try:
+        classes = []
+        if not isinstance(cell, dict):
+            return ''
+        if cell.get('step_operated'):
+            classes.append('table-success')
+            classes.append('vogel-step-cell')
+        if cell.get('is_fictitious'):
+            classes.append('fst-italic')
+            classes.append('text-muted')
+        if cell.get('allocation') == 0:
+            classes.append('table-secondary')
+        return ' '.join(classes)
+    except Exception:
+        return ''
+

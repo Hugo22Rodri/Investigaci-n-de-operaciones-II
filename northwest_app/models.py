@@ -4,6 +4,7 @@ class TransportationProblem(models.Model):
     METHOD_CHOICES = [
         ('northwest', 'Esquina Noroeste'),
         ('minimum_cost', 'Costo Mínimo'),
+        ('vogel', 'Método Vogel'),
         ('hungarian', 'Método Húngaro'),
     ]
     

@@ -1,0 +1,170 @@
+{% load custom_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - Método de Vogel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'northwest_app/style-vogel.css' %}">
+</head>
+<body>
+    <div class="container mt-4">
+        <header class="py-3 mb-4 border-bottom d-flex justify-content-between align-items-center">
+            <h1 class="h2 mb-0">Método de Vogel - Resultados</h1>
+            <div>
+                <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-success btn-sm">Nuevo Problema</a>
+                <a href="{% url 'northwest_app:history' %}" class="btn btn-outline-secondary btn-sm">Historial</a>
+            </div>
+        </header>
+
+        {% if has_adjusted_data %}
+        <div class="alert alert-info">Problema ajustado por diferencia de oferta/demanda. Las celdas ficticias aparecen en cursiva.</div>
+        {% endif %}
+
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">Resumen</div>
+            <div class="card-body">
+                <p><strong>Origenes:</strong> {{ real_origins }} &nbsp; <strong>Destinos reales:</strong> {{ real_destinations }}</p>
+                <p><strong>Costo total:</strong> {{ solution.total_cost }}</p>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header bg-secondary text-white">Matriz de Costos y Asignaciones</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-results">
+                        <thead>
+                            <tr>
+                                <th>Costs \ Alloc</th>
+                                {% for j in range_cols %}
+                                <th>Destino {{ forloop.counter }}{% if has_adjusted_data and forloop.counter > problem.destinations %} <small>(Fict)</small>{% endif %}</th>
+                                {% endfor %}
+                                <th>Oferta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in range_rows %}
+                            <tr>
+                                <th>Origen {{ forloop.counter }}{% if has_adjusted_data and forloop.counter > problem.origins %} <small>(Fict)</small>{% endif %}</th>
+                                {% for j in range_cols %}
+                                {% with cell=matrix|index:i|index:j %}
+                                <td class="{{ cell|cell_class }}">
+                                    <div><small class="text-muted">C: {{ cell.cost }}</small></div>
+                                    <div>A: <strong>{{ cell.allocation }}</strong></div>
+                                    {% if cell.step_operated %}
+                                    <div class="mt-1"><span class="badge bg-success">Paso {{ cell.step_operated }}</span></div>
+                                    {% endif %}
+                                </td>
+                                {% endwith %}
+                                {% endfor %}
+                                <td><strong>{{ supplies|index:i }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th>Demanda</th>
+                                {% for j in range_cols %}
+                                <td><strong>{{ demands|index:j }}</strong></td>
+                                {% endfor %}
+                                <td><strong>{{ total_supply }}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header bg-success text-white">Pasos del Método de Vogel</div>
+            <div class="card-body">
+                <div class="accordion" id="vogelStepsAccordion">
+                    {% for step in solution.steps %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                                Paso {{ step.step }} — Asignar {{ step.allocation }} unidades en ({{ step.i|add:1 }}, {{ step.j|add:1 }})
+                                <span class="ms-3 badge bg-primary">c/u {{ step.cost }}</span>
+                                <span class="ms-2 badge bg-info">Costo paso: {{ step.total_cost_step }}</span>
+                            </button>
+                        </h2>
+                        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#vogelStepsAccordion">
+                            <div class="accordion-body">
+                                <p><strong>Razón de elección:</strong>
+                                {% if step.chosen_type == 'row' %}
+                                    Se eligió la <strong>fila</strong> por tener la mayor penalidad (penalidad = {{ step.chosen_penalty }}).
+                                {% else %}
+                                    Se eligió la <strong>columna</strong> por tener la mayor penalidad (penalidad = {{ step.chosen_penalty }}).
+                                {% endif %}
+                                {% if step.tie %}
+                                    <br><em>Hubo empate de penalidades; se resolvió aplicando la regla de desempate por la línea elegida (fila/columna) y el costo mínimo en esa línea.</em>
+                                {% endif %}
+                                </p>
+
+                                <div class="mb-2">
+                                    <strong>Penalizaciones filas:</strong>
+                                    <div class="small">
+                                        {% for rid, vals in step.row_vals.items %}
+                                            <span>S{{ rid|add:1 }}: {% if vals|length >= 2 %}entre {{ vals.0.0 }} y {{ vals.1.0 }} → {{ vals.1.0|sub:vals.0.0 }}{% elif vals|length == 1 %}{{ vals.0.0 }}{% else %}—{% endif %};</span>
+                                        {% endfor %}
+                                    </div>
+                                    <strong class="mt-1">Penalizaciones columnas:</strong>
+                                    <div class="small">
+                                        {% for cid, vals in step.col_vals.items %}
+                                            <span>D{{ cid|add:1 }}: {% if vals|length >= 2 %}entre {{ vals.0.0 }} y {{ vals.1.0 }} → {{ vals.1.0|sub:vals.0.0 }}{% elif vals|length == 1 %}{{ vals.0.0 }}{% else %}—{% endif %};</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <p><strong>Regla aplicada y elección de celda:</strong>
+                                    {% comment %} Mostrar costos mínimos en la línea elegida y razonamiento de desempate {% endcomment %}
+                                    {% if step.chosen_type == 'row' %}
+                                        Línea (fila) seleccionada: S{{ step.i|add:1 }} — costo mínimo en esa fila: {% if step.min_cost_in_line is not None %}{{ step.min_cost_in_line }} (D{{ step.min_cost_pos|add:1 }}){% else %}—{% endif %}.
+                                    {% else %}
+                                        Línea (columna) seleccionada: D{{ step.j|add:1 }} — costo mínimo en esa columna: {% if step.min_cost_in_line is not None %}{{ step.min_cost_in_line }} (S{{ step.min_cost_pos|add:1 }}){% else %}—{% endif %}.
+                                    {% endif %}
+                                </p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-sm table-bordered">
+                                            <thead><tr><th>Antes</th><th>Después</th></tr></thead>
+                                            <tbody>
+                                                <tr><td>Oferta origen: {{ step.remaining_supply_before }}</td><td>{{ step.remaining_supply_after }}</td></tr>
+                                                <tr><td>Demanda destino: {{ step.remaining_demand_before }}</td><td>{{ step.remaining_demand_after }}</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-0"><strong>Detalle:</strong></p>
+                                        <ul class="mb-0">
+                                            <li>Celda seleccionada: ({{ step.i|add:1 }}, {{ step.j|add:1 }})</li>
+                                            <li>Unidades asignadas: {{ step.allocation }}</li>
+                                            <li>Costo unitario: {{ step.cost }}</li>
+                                            <li>Costo del paso: {{ step.total_cost_step }}</li>
+                                            <li>Expresión de asignación: <code>x<sub>{{ step.i|add:1 }},{{ step.j|add:1 }}</sub> = min({{ step.remaining_supply_before }}, {{ step.remaining_demand_before }}) = {{ step.allocation }}</code></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h4>Costo Total: <span class="text-primary">{{ solution.total_cost }}</span></h4>
+                <a href="{% url 'northwest_app:modi_results' problem.id %}" class="btn btn-outline-dark mt-2"><i class="bi bi-calculator"></i> Ver MODI</a>
+            </div>
+        </div>
+
+        <footer class="mt-4 text-center text-muted">Método de Vogel - Resultados detallados</footer>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'northwest_app/js/global.js' %}" defer></script>
+    <script src="{% static 'northwest_app/js/vogel.js' %}" defer></script>
+</body>
+</html>

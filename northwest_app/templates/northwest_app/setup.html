@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -258,32 +259,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Mejora la experiencia de usuario con interacciones
-        document.addEventListener('DOMContentLoaded', function() {
-            // Agregar clases a los campos del formulario para mejorar el estilo
-            const originsSelect = document.getElementById('{{ form.origins.id_for_label }}');
-            const destinationsSelect = document.getElementById('{{ form.destinations.id_for_label }}');
-            const balancedCheckbox = document.getElementById('{{ form.is_balanced.id_for_label }}');
-            
-            if (originsSelect) originsSelect.classList.add('form-select');
-            if (destinationsSelect) destinationsSelect.classList.add('form-select');
-            if (balancedCheckbox) {
-                balancedCheckbox.classList.add('form-check-input');
-                
-                // Agregar funcionalidad al checkbox
-                balancedCheckbox.addEventListener('change', function() {
-                    const infoBox = document.querySelector('.info-box');
-                    if (this.checked) {
-                        infoBox.querySelector('p').textContent = 
-                            'Un problema está balanceado cuando la oferta total es igual a la demanda total.';
-                    } else {
-                        infoBox.querySelector('p').textContent = 
-                            'El problema no está balanceado. El método agregará automáticamente un origen o destino ficticio para equilibrar oferta y demanda.';
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="{% static 'northwest_app/js/setup.js' %}" defer></script>
 </body>
 </html>

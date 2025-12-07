@@ -41,111 +41,16 @@
 
 <!-- Librería D3.js -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
-
+<script src="{% static 'northwest_app/js/diagram.js' %}" defer></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const supplies = {{ supplies|safe }};
-    const demands = {{ demands|safe }};
-    const costs = {{ costs|safe }};
-    const allocations = {{ allocations|safe }};
-
-    const width = document.getElementById("transport-diagram").clientWidth;
-    const height = 500;
-
-    const svg = d3.select("#transport-diagram").append("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-    // Crear nodos
-    const origins = supplies.map((s, i) => ({ id: "O" + (i+1), group: "origin", supply: s }));
-    const destinations = demands.map((d, j) => ({ id: "D" + (j+1), group: "destination", demand: d }));
-    const nodes = origins.concat(destinations);
-
-    // Crear enlaces según asignaciones
-    const links = [];
-    for (let i = 0; i < origins.length; i++) {
-        for (let j = 0; j < destinations.length; j++) {
-            if (allocations[i][j] > 0) {
-                links.push({
-                    source: origins[i].id,
-                    target: destinations[j].id,
-                    allocation: allocations[i][j],
-                    cost: costs[i][j]
-                });
-            }
-        }
-    }
-
-    // Posiciones fijas para los nodos
-    origins.forEach((o, i) => {
-        o.x = 150;
-        o.y = (i + 1) * (height / (origins.length + 1));
-    });
-
-    destinations.forEach((d, j) => {
-        d.x = width - 150;
-        d.y = (j + 1) * (height / (destinations.length + 1));
-    });
-
-    // Flechas
-    svg.append("defs").append("marker")
-        .attr("id", "arrow")
-        .attr("viewBox", "0 0 10 10")
-        .attr("refX", 10)
-        .attr("refY", 5)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 6)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0 0 L 10 5 L 0 10 z")
-        .attr("fill", "#007bff");
-
-    // Dibujar líneas (enlaces)
-    svg.selectAll("line")
-        .data(links)
-        .enter()
-        .append("line")
-        .attr("x1", d => nodes.find(n => n.id === d.source).x)
-        .attr("y1", d => nodes.find(n => n.id === d.source).y)
-        .attr("x2", d => nodes.find(n => n.id === d.target).x)
-        .attr("y2", d => nodes.find(n => n.id === d.target).y)
-        .attr("stroke", "#007bff")
-        .attr("stroke-width", 2)
-        .attr("marker-end", "url(#arrow)");
-
-    // Etiquetas en las líneas
-    svg.selectAll(".link-label")
-        .data(links)
-        .enter()
-        .append("text")
-        .attr("x", d => (nodes.find(n => n.id === d.source).x + nodes.find(n => n.id === d.target).x) / 2)
-        .attr("y", d => (nodes.find(n => n.id === d.source).y + nodes.find(n => n.id === d.target).y) / 2 - 10)
-        .attr("text-anchor", "middle")
-        .attr("font-size", "12px")
-        .attr("fill", "#333")
-        .text(d => `${d.allocation} u @ $${d.cost}`);
-
-    // Dibujar nodos
-    svg.selectAll("circle")
-        .data(nodes)
-        .enter()
-        .append("circle")
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-        .attr("r", 30)
-        .attr("fill", d => d.group === "origin" ? "#28a745" : "#ffc107");
-
-    // Etiquetas de los nodos
-    svg.selectAll(".label")
-        .data(nodes)
-        .enter()
-        .append("text")
-        .attr("x", d => d.x)
-        .attr("y", d => d.y + 5)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#fff")
-        .attr("font-weight", "bold")
-        .text(d => `${d.id}`);
+// Transferir datos al contenedor para que diagram.js pueda leerlos
+document.addEventListener('DOMContentLoaded', function(){
+    var container = document.getElementById('transport-diagram');
+    if (!container) return;
+    container.setAttribute('data-supplies', JSON.stringify({{ supplies|safe }}));
+    container.setAttribute('data-demands', JSON.stringify({{ demands|safe }}));
+    container.setAttribute('data-costs', JSON.stringify({{ costs|safe }}));
+    container.setAttribute('data-allocations', JSON.stringify({{ allocations|safe }}));
 });
 </script>
 

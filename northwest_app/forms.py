@@ -37,25 +37,28 @@ class DataInputForm(forms.Form):
         # Agregar campos para ofertas solo si se solicita
         if include_supplies_demands:
             for i in range(origins):
-                self.fields[f'supply_{i}'] = forms.IntegerField(
+                self.fields[f'supply_{i}'] = forms.DecimalField(
                     label=f'Oferta del Origen {i+1}',
                     min_value=0,
+                    required=True,
                     widget=forms.NumberInput(attrs={'class': 'form-control', 'required': 'required'})
                 )
 
             # Agregar campos para demandas
             for j in range(destinations):
-                self.fields[f'demand_{j}'] = forms.IntegerField(
+                self.fields[f'demand_{j}'] = forms.DecimalField(
                     label=f'Demanda del Destino {j+1}',
                     min_value=0,
+                    required=True,
                     widget=forms.NumberInput(attrs={'class': 'form-control', 'required': 'required'})
                 )
 
         # Agregar campos para costos (siempre)
         for i in range(origins):
             for j in range(destinations):
-                self.fields[f'cost_{i}_{j}'] = forms.IntegerField(
+                self.fields[f'cost_{i}_{j}'] = forms.DecimalField(
                     label=f'Costo O{i+1}→D{j+1}',
                     min_value=0,
-                    widget=forms.NumberInput(attrs={'class': 'form-control', 'required': 'required'})
+                    required=True,
+                    widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'required': 'required'})
                 )

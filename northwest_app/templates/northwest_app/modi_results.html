@@ -1,0 +1,212 @@
+{% load custom_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados MODI - Método de Multiplicadores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'northwest_app/style.css' %}">
+</head>
+<body>
+    <div class="container mt-4">
+        <header class="py-3 mb-4 border-bottom d-flex justify-content-between align-items-center">
+            <h1 class="h4">Método MODI (Multiplicadores)</h1>
+            <div>
+                <a href="{% url 'northwest_app:results' problem.id %}" class="btn btn-outline-secondary btn-sm">← Volver</a>
+            </div>
+        </header>
+
+        <div class="card mb-3">
+            <div class="card-header bg-dark text-white">Potenciales (u, v)</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>u (filas)</h6>
+                        <ul class="list-group">
+                            {% for val in u %}
+                            <li class="list-group-item">u{{ forloop.counter0 }} = {{ val }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>v (columnas)</h6>
+                        <ul class="list-group">
+                            {% for val in v %}
+                            <li class="list-group-item">v{{ forloop.counter0 }} = {{ val }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header bg-secondary text-white">Deltas (cost - u - v) — Pasos</div>
+            <div class="card-body">
+                <p class="small text-muted">Paso 1: calculamos los potenciales <code>u</code> y <code>v</code> a partir de las celdas básicas (asignadas). Paso 2: para cada celda calculamos Δ = c - (u+v). Las celdas con Δ &lt; 0 indican posibilidad de mejora.</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                {% for j in range_cols %}
+                                <th>Col {{ forloop.counter }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in range_rows %}
+                            <tr>
+                                <th>Fila {{ forloop.counter }}</th>
+                                {% for j in range_cols %}
+                                <td class="{% if deltas|index:i|index:j < 0 %}table-warning{% endif %}">
+                                    <div><strong>Δ = {{ deltas|index:i|index:j }}</strong></div>
+                                    <div class="small">c = {{ costs|index:i|index:j }} | a = {{ allocations|index:i|index:j }}</div>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="mb-2">
+                {% if is_optimal %}
+                    <div class="alert alert-success">La solución actual es óptima (no hay deltas negativos).</div>
+                {% else %}
+                    <div class="alert alert-warning">Existen deltas negativos. Celda entrante sugerida: <strong>({{ entering.0|add:1 }}, {{ entering.1|add:1 }})</strong> con Δ = {{ most_negative }}</div>
+                {% endif %}
+                </div>
+                <div class="accordion" id="modiSteps">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="modiStep1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#modiStep1c" aria-expanded="true" aria-controls="modiStep1c">
+                                Paso 1 — Cálculo de potenciales (u, v)
+                            </button>
+                        </h2>
+                        <div id="modiStep1c" class="accordion-collapse collapse show" aria-labelledby="modiStep1" data-bs-parent="#modiSteps">
+                            <div class="accordion-body small">
+                                Se fijó arbitrariamente <code>u0 = 0</code> y se propagaron las ecuaciones <code>u[i] + v[j] = c[i][j]</code> para celdas básicas. Potenciales resultantes:
+                                <ul>
+                                    {% for val in u %}<li>u{{ forloop.counter0 }} = {{ val }}</li>{% endfor %}
+                                </ul>
+                                <ul>
+                                    {% for val in v %}<li>v{{ forloop.counter0 }} = {{ val }}</li>{% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="modiStep2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modiStep2c" aria-expanded="false" aria-controls="modiStep2c">
+                                Paso 2 — Cálculo de Δ y elección de celda entrante
+                            </button>
+                        </h2>
+                        <div id="modiStep2c" class="accordion-collapse collapse" aria-labelledby="modiStep2" data-bs-parent="#modiSteps">
+                            <div class="accordion-body small">
+                                Para cada celda no básica se calculó Δ = c - (u+v). La celda con Δ más negativo es candidata a entrar en la base:
+                                <p><strong>Entrante:</strong> ({{ entering.0|add:1 }}, {{ entering.1|add:1 }}) con Δ = {{ most_negative }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="modiStep3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modiStep3c" aria-expanded="false" aria-controls="modiStep3c">
+                                Paso 3 — Búsqueda de ciclo alternante e identificación de signos
+                            </button>
+                        </h2>
+                        <div id="modiStep3c" class="accordion-collapse collapse" aria-labelledby="modiStep3" data-bs-parent="#modiSteps">
+                            <div class="accordion-body small">
+                                {% if not cycle %}
+                                    No se encontró un ciclo alternante que incluya la celda entrante; no se puede mejorar automáticamente.
+                                {% else %}
+                                    Se encontró un ciclo alternante (orden de nodos):
+                                    <ol>
+                                        {% for node in cycle %}
+                                        <li>({{ node.0|add:1 }}, {{ node.1|add:1 }})</li>
+                                        {% endfor %}
+                                    </ol>
+                                    En el ciclo se alternan signos + y - empezando por + en la celda entrante. Las posiciones con signo - son las que limitan el ajuste.
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="modiStep4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modiStep4c" aria-expanded="false" aria-controls="modiStep4c">
+                                Paso 4 — Ajuste de cantidades sobre el ciclo
+                            </button>
+                        </h2>
+                        <div id="modiStep4c" class="accordion-collapse collapse" aria-labelledby="modiStep4" data-bs-parent="#modiSteps">
+                            <div class="accordion-body small">
+                                {% if improved %}
+                                    Se identificaron las posiciones con signo - y se tomó el mínimo entre sus asignaciones: <strong>{{ min_adjust }}</strong>. Ese valor se resta de las posiciones con signo - y se suma en las posiciones con signo +.
+                                    <p class="mt-2">Nuevo costo: <strong>{{ new_total_cost }}</strong></p>
+                                {% else %}
+                                    No se aplicó ajuste automático.
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">Asignaciones (antes / después si aplica)</div>
+            <div class="card-body">
+                <p class="small text-muted">Las celdas que forman parte del ciclo se resaltan; la celda entrante aparece con un borde.</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                {% for j in range_cols %}
+                                <th>Col {{ forloop.counter }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in range_rows %}
+                            <tr>
+                                <th>Fila {{ forloop.counter }}</th>
+                                {% for j in range_cols %}
+                                {% with cell=modi_matrix|index:i|index:j %}
+                                <td class="{% if cell.in_cycle %}table-warning{% endif %} {% if cell.is_entering %}border border-3 border-primary{% endif %}">
+                                    <div><small class="text-muted">c = {{ cell.cost }}</small></div>
+                                    <div>Antes: <strong>{{ cell.before }}</strong></div>
+                                    {% if improved %}
+                                    <div>Después: <strong>{{ cell.after }}</strong></div>
+                                    {% endif %}
+                                </td>
+                                {% endwith %}
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-4 text-center">
+            <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-success">Resolver otro problema</a>
+            <a href="{% url 'northwest_app:history' %}" class="btn btn-outline-secondary">Historial</a>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{% static 'northwest_app/js/global.js' %}" defer></script>
+        <script src="{% static 'northwest_app/js/modi.js' %}" defer></script>
+</body>
+</html>

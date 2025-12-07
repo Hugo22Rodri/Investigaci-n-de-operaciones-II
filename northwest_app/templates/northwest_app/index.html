@@ -46,8 +46,13 @@
                                 </a>
                             </li>
                              <li>
-                                <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
-                                    <i class="bi bi-table"></i> Metodo Húngaro
+                                <a class="dropdown-item" href="{% url 'northwest_app:hungaro' %}">
+                                    <i class="bi bi-table"></i> Método Húngaro
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'northwest_app:vogel' %}">
+                                    <i class="bi bi-award"></i> Método Vogel
                                 </a>
                             </li>
                         </ul>
@@ -72,15 +77,18 @@
         
         <div class="container">
             <div class="row align-items-center min-vh-100">
-                <div class="col-lg-8 mx-auto text-center">
+                <div class="col-lg-8 mx-auto text-center hero-content">
                     <div class="hero-badge">Herramienta de Optimización</div>
-                    <h1 class="display-4 fw-bold mb-3 hero-title">
+                    <h1 class="hero-title">
                         <i class="bi bi-truck hero-icon"></i> Solucionador de Problemas de Transporte
                     </h1>
-                    <p class="lead mb-4 hero-subtitle">Resuelve problemas de distribución y logística usando métodos comprobados de investigación de operaciones</p>
+                    <p class="hero-subtitle">Resuelve problemas de distribución y logística usando métodos comprobados de investigación de operaciones para minimizar costos y optimizar rutas de transporte.</p>
                     <div class="hero-buttons">
                         <a href="#metodos" class="btn btn-light btn-lg rounded-pill px-4 py-3 me-3 btn-pulse">
                             <i class="bi bi-grid-3x3-gap me-2"></i> Explorar Métodos
+                        </a>
+                        <a href="#info" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3 btn-pulse">
+                            <i class="bi bi-info-circle me-2"></i> Más Información
                         </a>
                     </div>
                 </div>
@@ -88,7 +96,126 @@
         </div>
     </section>
 
+    <!-- Methods Section -->
+    <section id="metodos" class="methods-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Métodos de Solución</h2>
+                    <p class="section-subtitle">Selecciona uno de los métodos disponibles para resolver tu problema de transporte</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="method-card">
+                        <div class="method-icon">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                        </div>
+                        <div class="method-content">
+                            <h3 class="method-title">Esquina Noroeste</h3>
+                            <p class="method-description">Método simple para encontrar una solución inicial factible comenzando desde la esquina superior izquierda de la matriz de costos.</p>
+                            <a href="{% url 'northwest_app:esquina_noroeste' %}" class="method-link">
+                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="method-card">
+                        <div class="method-icon">
+                            <i class="bi bi-graph-down"></i>
+                        </div>
+                        <div class="method-content">
+                            <h3 class="method-title">Costo Mínimo</h3>
+                            <p class="method-description">Encuentra una solución inicial asignando primero las rutas con los costos más bajos disponibles.</p>
+                            <a href="{% url 'northwest_app:costo_minimo' %}" class="method-link">
+                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="method-card">
+                        <div class="method-icon">
+                            <i class="bi bi-table"></i>
+                        </div>
+                        <div class="method-content">
+                            <h3 class="method-title">Método Húngaro</h3>
+                            <p class="method-description">Algoritmo eficiente para resolver problemas de asignación, un caso especial de problemas de transporte.</p>
+                            <a href="{% url 'northwest_app:hungaro' %}" class="method-link">
+                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="method-card">
+                        <div class="method-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <div class="method-content">
+                            <h3 class="method-title">Método Vogel</h3>
+                            <p class="method-description">Método de aproximación que considera las penalizaciones para encontrar una solución inicial cercana a la óptima.</p>
+                            <a href="{% url 'northwest_app:vogel' %}" class="method-link">
+                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- Info Section -->
+    <section id="info" class="info-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="fw-bold mb-4">Optimización de Problemas de Transporte</h2>
+                    <p class="mb-4">Los problemas de transporte son casos especiales de programación lineal que buscan determinar el plan de transporte de mercancías desde varios orígenes hasta diferentes destinos, minimizando el costo total.</p>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0">Minimiza costos de transporte y distribución</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0">Optimiza la asignación de recursos limitados</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0">Mejora la eficiencia en la cadena de suministro</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="how-it-works">
+                        <h4>¿Cómo funciona?</h4>
+                        <ol>
+                            <li>Define tus orígenes, destinos y costos de transporte</li>
+                            <li>Selecciona el método de solución que prefieras</li>
+                            <li>Ingresa los datos requeridos en el formulario</li>
+                            <li>Obtén la solución óptima con el detalle de asignaciones</li>
+                            <li>Analiza los resultados y costos totales</li>
+                        </ol>
+                        <div class="note-box">
+                            <p class="mb-0"><strong>Nota:</strong> Cada método tiene sus ventajas y es más adecuado para diferentes tipos de problemas. Experimenta con varios para encontrar la mejor solución.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -102,86 +229,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Preloader
-            window.addEventListener('load', function() {
-                const preloader = document.getElementById('preloader');
-                setTimeout(function() {
-                    preloader.style.opacity = '0';
-                    preloader.style.visibility = 'hidden';
-                }, 500);
-            });
-            
-            // Create particles
-            function createParticles() {
-                const container = document.getElementById('particles-container');
-                const particleCount = 30;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    
-                    // Random size between 2px and 6px
-                    const size = Math.random() * 4 + 2;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    
-                    // Random position
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    
-                    // Random animation delay
-                    particle.style.animationDelay = `${Math.random() * 20}s`;
-                    
-                    container.appendChild(particle);
-                }
-            }
-            
-            createParticles();
-            
-            // Smooth scrolling
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-            
-            // Navbar scroll effect
-            window.addEventListener('scroll', function() {
-                const navbar = document.querySelector('.custom-navbar');
-                if (window.scrollY > 50) {
-                    navbar.classList.add('navbar-scrolled');
-                } else {
-                    navbar.classList.remove('navbar-scrolled');
-                }
-            });
-            
-            // Fade in animation on scroll
-            const fadeElements = document.querySelectorAll('.fade-in');
-            
-            const fadeInOnScroll = function() {
-                fadeElements.forEach(element => {
-                    const elementTop = element.getBoundingClientRect().top;
-                    const elementVisible = 150;
-                    
-                    if (elementTop < window.innerHeight - elementVisible) {
-                        element.classList.add('visible');
-                    }
-                });
-            };
-            
-            // Check on load and scroll
-            window.addEventListener('scroll', fadeInOnScroll);
-            fadeInOnScroll();
-        });
-    </script>
+    <script src="{% static 'northwest_app/js/page-nav.js' %}" defer></script>
+    <script src="{% static 'northwest_app/js/script_portada.js' %}" defer></script>
 </body>
 </html>

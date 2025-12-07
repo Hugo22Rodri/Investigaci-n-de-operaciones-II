@@ -3,6 +3,45 @@
     <form method="post">
         {% csrf_token %}
 
+        <!-- Selector de Método -->
+        <div class="card mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div class="card-header" style="background: transparent; border: none; padding: 1rem;">
+                <h5 class="mb-0"><i class="bi bi-diagram-3 me-2"></i>Método de Solución</h5>
+            </div>
+            <div class="card-body" style="padding: 1rem;">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="method" value="northwest" 
+                                {% if current_method == 'northwest' %}checked{% endif %} style="cursor: pointer;">
+                            <span style="cursor: pointer;">Esquina Noroeste</span>
+                        </label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="method" value="minimum_cost" 
+                                {% if current_method == 'minimum_cost' %}checked{% endif %} style="cursor: pointer;">
+                            <span style="cursor: pointer;">Costo Mínimo</span>
+                        </label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="method" value="vogel" 
+                                {% if current_method == 'vogel' %}checked{% endif %} style="cursor: pointer;">
+                            <span style="cursor: pointer;">Método Vogel</span>
+                        </label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="method" value="hungarian" 
+                                {% if current_method == 'hungarian' %}checked{% endif %} style="cursor: pointer;">
+                            <span style="cursor: pointer;">Método Húngaro</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% if include_supplies_demands %}
         <div class="row mb-4">
             <div class="col-md-6">
@@ -88,3 +127,48 @@
         </div>
     </form>
 </div>
+
+<script>
+    // Datos guardados del formulario (si existen)
+    var savedFormData = {{ form_data|safe }};
+    
+    // Cargar datos guardados en los campos del formulario
+    document.addEventListener('DOMContentLoaded', function(){
+        if (Object.keys(savedFormData).length > 0){
+            for (var fieldName in savedFormData){
+                var field = document.querySelector('[name="' + fieldName + '"]');
+                if (field){
+                    field.value = savedFormData[fieldName];
+                }
+            }
+        }
+        
+        // Cambio automático de método sin perder datos
+        var methodRadios = document.querySelectorAll('input[name="method"]');
+        methodRadios.forEach(function(radio){
+            radio.addEventListener('change', function(){
+                // Cuando se cambia el método, enviar el formulario con solo el método
+                var form = document.querySelector('form');
+                var tempForm = document.createElement('form');
+                tempForm.method = 'POST';
+                tempForm.action = form.action;
+                
+                // Copiar CSRF token
+                var csrfInput = form.querySelector('[name="csrfmiddlewaretoken"]');
+                if (csrfInput){
+                    tempForm.appendChild(csrfInput.cloneNode());
+                }
+                
+                // Añadir el método seleccionado
+                var methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = 'method';
+                methodInput.value = radio.value;
+                tempForm.appendChild(methodInput);
+                
+                document.body.appendChild(tempForm);
+                tempForm.submit();
+            });
+        });
+    });
+</script>
