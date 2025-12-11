@@ -1055,9 +1055,8 @@
                 <div class="col-lg-6 d-none d-lg-block">
                     <div class="hero-image-container">
                         <div class="hero-image">
-                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                                 alt="Optimización de Transporte" 
-                                 class="img-fluid rounded-4 shadow-lg">
+                            {% load static %}
+                            <img src="{% static 'northwest_app/images/Transportes.jpg' %}">
                             <div class="image-overlay-card card-1">
                                 <i class="bi bi-graph-up-arrow text-primary"></i>
                                 <span>Análisis de Costos</span>
