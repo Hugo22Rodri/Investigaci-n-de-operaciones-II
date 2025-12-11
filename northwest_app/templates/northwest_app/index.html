@@ -4,55 +4,994 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solucionador de Problemas de Transporte</title>
+    <title>Solucionador de Problemas de Transporte | Optimización Logística</title>
+    <meta name="description" content="Plataforma profesional para resolver problemas de transporte utilizando métodos de investigación de operaciones">
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'northwest_app/style_portada.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===========================================
+           VARIABLES Y RESET
+           =========================================== */
+        :root {
+            --primary-color: hsla(133, 70%, 4%, 1.00);
+            --primary-dark: #3a56d4;
+            --secondary-color: #7209b7;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --danger-color: #ff6b6b;
+            --dark-color: #203c3cff;
+            --light-color: #f8f9fa;
+            
+            --primary-gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --success-gradient: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+            --warning-gradient: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.16);
+            --shadow-xl: 0 12px 60px rgba(0,0,0,0.2);
+            
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            --transition-fast: 0.3s ease;
+            --transition-medium: 0.5s ease;
+            --transition-slow: 0.8s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--dark-color);
+            overflow-x: hidden;
+            background-color: #ffffff;
+        }
+
+        /* ===========================================
+           PRELOADER
+           =========================================== */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .preloader-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loader-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .loader-logo i {
+            margin-right: 15px;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-text {
+            font-size: 1rem;
+            opacity: 0.9;
+            animation: pulse 2s infinite;
+        }
+
+        /* ===========================================
+           NAVBAR
+           =========================================== */
+        .custom-navbar {
+            background: rgba(6, 87, 238, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
+            transition: var(--transition-fast);
+        }
+
+        .custom-navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
+
+        .brand-text {
+            color: var(--dark-color);
+        }
+
+        .brand-highlight {
+            color: var(--primary-color);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.25rem;
+            border-radius: 50px;
+            transition: var(--transition-fast);
+        }
+
+        .nav-link:hover {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link.active {
+            background: var(--primary-color);
+            color: white !important;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: var(--shadow-lg);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .method-icon-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* ===========================================
+           HERO SECTION
+           =========================================== */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1d44f5ff 0%, #7a08edff 100%);
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero-background-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite linear;
+        }
+
+        .shape-1 { width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s; }
+        .shape-2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-delay: -5s; }
+        .shape-3 { width: 150px; height: 150px; bottom: 20%; left: 15%; animation-delay: -10s; }
+        .shape-4 { width: 250px; height: 250px; top: 20%; right: 20%; animation-delay: -15s; }
+        .shape-5 { width: 100px; height: 100px; bottom: 40%; right: 30%; animation-delay: -7s; }
+
+        .particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            color: #030000ff;
+            z-index: 1;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .text-gradient {
+            background: linear-gradient( #1cf0d3ff 0%, #cd95f3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #bdf909ff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .hero-buttons {
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+
+        .btn-pulse {
+            animation: pulse 2s infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-pulse::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-pulse:hover::before {
+            left: 100%;
+        }
+
+        .hero-image-container {
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .image-overlay-card {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-md);
+            font-weight: 500;
+            z-index: 2;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .card-1 { top: 20px; left: -20px; animation-delay: 0s; }
+        .card-2 { bottom: 40px; right: -20px; animation-delay: 1s; }
+        .card-3 { bottom: -20px; left: 30%; animation-delay: 2s; }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            opacity: 0.7;
+            animation: bounce 2s infinite;
+        }
+
+        .mouse {
+            width: 30px;
+            height: 50px;
+            border: 2px solid white;
+            border-radius: 15px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .wheel {
+            width: 4px;
+            height: 10px;
+            background: white;
+            border-radius: 2px;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scroll 2s infinite;
+        }
+
+        /* ===========================================
+           METHODS SECTION
+           =========================================== */
+        .methods-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #6c757d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .method-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition-medium);
+            box-shadow: var(--shadow-md);
+            height: 100%;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .method-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .method-header {
+            padding: 2rem 2rem 1rem;
+            position: relative;
+        }
+
+        .method-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .bg-primary-gradient { background: var(--primary-gradient); }
+        .bg-success-gradient { background: var(--success-gradient); }
+        .bg-warning-gradient { background: var(--warning-gradient); }
+        .bg-danger-gradient { background: var(--danger-gradient); }
+
+        .method-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--light-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .method-body {
+            padding: 0 2rem 1rem;
+        }
+
+        .method-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .method-description {
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .method-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .feature-tag {
+            background: rgba(194, 196, 193, 0.94);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .method-footer {
+            padding: 1rem 2rem 2rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .method-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+
+        .method-link:hover {
+            color: var(--primary-dark);
+            gap: 10px;
+        }
+
+        /* ===========================================
+           BENEFITS SECTION
+           =========================================== */
+        .benefits-section {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .benefits-image {
+            position: relative;
+        }
+
+        .benefits-image::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            transform: rotate(3deg);
+            z-index: -1;
+        }
+
+        .benefits-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .lead {
+            font-size: 1.2rem;
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .benefit-text h5 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-text p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* ===========================================
+           HOW IT WORKS SECTION
+           =========================================== */
+        .how-it-works-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .step-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: var(--transition-medium);
+            box-shadow: var(--shadow-md);
+            height: 100%;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .step-number {
+            font-size: 4rem;
+            font-weight: 800;
+            color: rgba(21, 225, 236, 0.72);
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 1.5rem;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .step-description {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .cta-box {
+            background: var(--primary-gradient);
+            padding: 4rem;
+            border-radius: 30px;
+            color: white;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* ===========================================
+           FOOTER
+           =========================================== */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 80px 0 30px;
+        }
+
+        .footer-brand {
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+
+        .footer-divider {
+            background: rgba(255,255,255,0.1);
+            margin: 2rem 0;
+        }
+
+        .footer-copyright {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* ===========================================
+           BACK TO TOP
+           =========================================== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-fast);
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        /* ===========================================
+           ANIMACIONES
+           =========================================== */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-10px) translateX(-50%); }
+            60% { transform: translateY(-5px) translateX(-50%); }
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(20px); opacity: 0; }
+        }
+
+        /* ===========================================
+           RESPONSIVE
+           =========================================== */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-box {
+                padding: 3rem 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.3rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero-buttons .btn {
+                width: 100%;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .method-card {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .method-icon-wrapper {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .step-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Preloader -->
     <div id="preloader">
-        <div class="loader"></div>
+        <div class="preloader-content">
+            <div class="loader-logo">
+                <i class="bi bi-truck-flatbed"></i>
+                <span>Transport Solver</span>
+            </div>
+            <div class="loader-spinner"></div>
+            <p class="loader-text">Cargando herramientas de optimización...</p>
+        </div>
     </div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-graph-up-arrow me-2"></i>Solucionador de Transporte
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-graph-up-arrow logo-icon"></i>
+                <span class="brand-text">Transport<span class="brand-highlight">Solver</span></span>
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metodos">Métodos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#beneficios">Beneficios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#como-funciona">Cómo Funciona</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-diagram-3 me-1"></i>Métodos
+                            <i class="bi bi-calculator me-1"></i>Solucionadores
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header">Métodos Disponibles</h6></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'northwest_app:esquina_noroeste' %}">
-                                    <i class="bi bi-grid-3x3-gap me-2"></i>Esquina Noroeste
+                                    <div class="d-flex align-items-center">
+                                        <div class="method-icon-small bg-primary">
+                                            <i class="bi bi-grid-3x3-gap"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="fw-semibold">Esquina Noroeste</div>
+                                            <small class="text-muted">Solución inicial básica</small>
+                                        </div>
+                                    </div>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
-                                    <i class="bi bi-graph-down me-2"></i>Costo Mínimo
+                                    <div class="d-flex align-items-center">
+                                        <div class="method-icon-small bg-success">
+                                            <i class="bi bi-graph-down"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="fw-semibold">Costo Mínimo</div>
+                                            <small class="text-muted">Optimización por costos</small>
+                                        </div>
+                                    </div>
                                 </a>
                             </li>
-                             <li>
+                            <li>
                                 <a class="dropdown-item" href="{% url 'northwest_app:hungaro' %}">
-                                    <i class="bi bi-table"></i> Método Húngaro
+                                    <div class="d-flex align-items-center">
+                                        <div class="method-icon-small bg-warning">
+                                            <i class="bi bi-table"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="fw-semibold">Método Húngaro</div>
+                                            <small class="text-muted">Problemas de asignación</small>
+                                        </div>
+                                    </div>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'northwest_app:vogel' %}">
-                                    <i class="bi bi-award"></i> Método Vogel
+                                    <div class="d-flex align-items-center">
+                                        <div class="method-icon-small bg-danger">
+                                            <i class="bi bi-award"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="fw-semibold">Método Vogel</div>
+                                            <small class="text-muted">Aproximación por penalización</small>
+                                        </div>
+                                    </div>
                                 </a>
                             </li>
                         </ul>
@@ -63,7 +1002,8 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section id="inicio" class="hero-section">
+        <!-- Animated Background -->
         <div class="hero-background-animation">
             <div class="floating-shape shape-1"></div>
             <div class="floating-shape shape-2"></div>
@@ -72,27 +1012,76 @@
             <div class="floating-shape shape-5"></div>
         </div>
         
-        <!-- Particles Background -->
+        <!-- Particles Container -->
         <div class="particles-container" id="particles-container"></div>
         
         <div class="container">
             <div class="row align-items-center min-vh-100">
-                <div class="col-lg-8 mx-auto text-center hero-content">
-                    <div class="hero-badge">Herramienta de Optimización</div>
-                    <h1 class="hero-title">
-                        <i class="bi bi-truck hero-icon"></i> Solucionador de Problemas de Transporte
-                    </h1>
-                    <p class="hero-subtitle">Resuelve problemas de distribución y logística usando métodos comprobados de investigación de operaciones para minimizar costos y optimizar rutas de transporte.</p>
-                    <div class="hero-buttons">
-                        <a href="#metodos" class="btn btn-light btn-lg rounded-pill px-4 py-3 me-3 btn-pulse">
-                            <i class="bi bi-grid-3x3-gap me-2"></i> Explorar Métodos
-                        </a>
-                        <a href="#info" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3 btn-pulse">
-                            <i class="bi bi-info-circle me-2"></i> Más Información
-                        </a>
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <i class="bi bi-star-fill me-2"></i>Herramienta Profesional de Optimización
+                        </div>
+                        <h1 class="hero-title">
+                            Solución Inteligente para <span class="text-gradient">Problemas de Transporte</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            Plataforma avanzada que implementa algoritmos de investigación de operaciones para optimizar la distribución logística, minimizar costos y maximizar la eficiencia en la cadena de suministro.
+                        </p>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">4</div>
+                                <div class="stat-label">Métodos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">100%</div>
+                                <div class="stat-label">Precisión</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">∞</div>
+                                <div class="stat-label">Escalabilidad</div>
+                            </div>
+                        </div>
+                        <div class="hero-buttons">
+                            <a href="#metodos" class="btn btn-primary btn-lg rounded-pill px-4 py-3 me-3 btn-pulse">
+                                <i class="bi bi-play-circle me-2"></i> Comenzar Ahora
+                            </a>
+                            <a href="#como-funciona" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3">
+                                <i class="bi bi-info-circle me-2"></i> Ver Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="hero-image-container">
+                        <div class="hero-image">
+                            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                                 alt="Optimización de Transporte" 
+                                 class="img-fluid rounded-4 shadow-lg">
+                            <div class="image-overlay-card card-1">
+                                <i class="bi bi-graph-up-arrow text-primary"></i>
+                                <span>Análisis de Costos</span>
+                            </div>
+                            <div class="image-overlay-card card-2">
+                                <i class="bi bi-geo-alt text-success"></i>
+                                <span>Optimización de Rutas</span>
+                            </div>
+                            <div class="image-overlay-card card-3">
+                                <i class="bi bi-calculator text-warning"></i>
+                                <span>Cálculos en Tiempo Real</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <div class="arrow"></div>
         </div>
     </section>
 
@@ -101,63 +1090,125 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center mb-5">
-                    <h2 class="section-title">Métodos de Solución</h2>
-                    <p class="section-subtitle">Selecciona uno de los métodos disponibles para resolver tu problema de transporte</p>
+                    <div class="section-header">
+                        <h2 class="section-title">Métodos de <span class="text-gradient">Optimización</span></h2>
+                        <p class="section-subtitle">Selecciona el algoritmo más adecuado para tu problema logístico</p>
+                    </div>
                 </div>
             </div>
+            
             <div class="row g-4">
+                <!-- Método 1 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="method-card">
-                        <div class="method-icon">
-                            <i class="bi bi-grid-3x3-gap"></i>
+                    <div class="method-card" data-method="northwest">
+                        <div class="method-header">
+                            <div class="method-icon-wrapper bg-primary-gradient">
+                                <i class="bi bi-grid-3x3-gap"></i>
+                            </div>
+                            <span class="method-badge">Básico</span>
                         </div>
-                        <div class="method-content">
+                        <div class="method-body">
                             <h3 class="method-title">Esquina Noroeste</h3>
-                            <p class="method-description">Método simple para encontrar una solución inicial factible comenzando desde la esquina superior izquierda de la matriz de costos.</p>
+                            <p class="method-description">
+                                Algoritmo simple y eficiente para encontrar soluciones factibles iniciales mediante asignación sistemática desde el origen superior izquierdo.
+                            </p>
+                            <div class="method-features">
+                                <span class="feature-tag">Simple</span>
+                                <span class="feature-tag">Determinístico</span>
+                                <span class="feature-tag">Rápido</span>
+                            </div>
+                        </div>
+                        <div class="method-footer">
                             <a href="{% url 'northwest_app:esquina_noroeste' %}" class="method-link">
-                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                                <span>Usar Método</span>
+                                <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Método 2 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="method-card">
-                        <div class="method-icon">
-                            <i class="bi bi-graph-down"></i>
+                    <div class="method-card" data-method="mincost">
+                        <div class="method-header">
+                            <div class="method-icon-wrapper bg-success-gradient">
+                                <i class="bi bi-graph-down"></i>
+                            </div>
+                            <span class="method-badge">Recomendado</span>
                         </div>
-                        <div class="method-content">
+                        <div class="method-body">
                             <h3 class="method-title">Costo Mínimo</h3>
-                            <p class="method-description">Encuentra una solución inicial asignando primero las rutas con los costos más bajos disponibles.</p>
+                            <p class="method-description">
+                                Prioriza las rutas con menor costo para obtener soluciones iniciales más cercanas al óptimo, reduciendo iteraciones posteriores.
+                            </p>
+                            <div class="method-features">
+                                <span class="feature-tag">Económico</span>
+                                <span class="feature-tag">Eficiente</span>
+                                <span class="feature-tag">Intuitivo</span>
+                            </div>
+                        </div>
+                        <div class="method-footer">
                             <a href="{% url 'northwest_app:costo_minimo' %}" class="method-link">
-                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                                <span>Usar Método</span>
+                                <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Método 3 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="method-card">
-                        <div class="method-icon">
-                            <i class="bi bi-table"></i>
+                    <div class="method-card" data-method="hungarian">
+                        <div class="method-header">
+                            <div class="method-icon-wrapper bg-warning-gradient">
+                                <i class="bi bi-table"></i>
+                            </div>
+                            <span class="method-badge">Avanzado</span>
                         </div>
-                        <div class="method-content">
+                        <div class="method-body">
                             <h3 class="method-title">Método Húngaro</h3>
-                            <p class="method-description">Algoritmo eficiente para resolver problemas de asignación, un caso especial de problemas de transporte.</p>
+                            <p class="method-description">
+                                Algoritmo especializado para problemas de asignación que garantiza soluciones óptimas con complejidad polinómica.
+                            </p>
+                            <div class="method-features">
+                                <span class="feature-tag">Óptimo</span>
+                                <span class="feature-tag">Preciso</span>
+                                <span class="feature-tag">Completo</span>
+                            </div>
+                        </div>
+                        <div class="method-footer">
                             <a href="{% url 'northwest_app:hungaro' %}" class="method-link">
-                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                                <span>Usar Método</span>
+                                <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Método 4 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="method-card">
-                        <div class="method-icon">
-                            <i class="bi bi-award"></i>
+                    <div class="method-card" data-method="vogel">
+                        <div class="method-header">
+                            <div class="method-icon-wrapper bg-danger-gradient">
+                                <i class="bi bi-award"></i>
+                            </div>
+                            <span class="method-badge">Premium</span>
                         </div>
-                        <div class="method-content">
+                        <div class="method-body">
                             <h3 class="method-title">Método Vogel</h3>
-                            <p class="method-description">Método de aproximación que considera las penalizaciones para encontrar una solución inicial cercana a la óptima.</p>
+                            <p class="method-description">
+                                Considera penalizaciones de costo para encontrar soluciones iniciales muy cercanas al óptimo, minimizando iteraciones.
+                            </p>
+                            <div class="method-features">
+                                <span class="feature-tag">Inteligente</span>
+                                <span class="feature-tag">Cercano al Óptimo</span>
+                                <span class="feature-tag">Robusto</span>
+                            </div>
+                        </div>
+                        <div class="method-footer">
                             <a href="{% url 'northwest_app:vogel' %}" class="method-link">
-                                Usar método <i class="bi bi-arrow-right ms-2"></i>
+                                <span>Usar Método</span>
+                                <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -166,51 +1217,145 @@
         </div>
     </section>
 
-    <!-- Info Section -->
-    <section id="info" class="info-section">
+    <!-- Benefits Section -->
+    <section id="beneficios" class="benefits-section">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h2 class="fw-bold mb-4">Optimización de Problemas de Transporte</h2>
-                    <p class="mb-4">Los problemas de transporte son casos especiales de programación lineal que buscan determinar el plan de transporte de mercancías desde varios orígenes hasta diferentes destinos, minimizando el costo total.</p>
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
-                        <div>
-                            <p class="mb-0">Minimiza costos de transporte y distribución</p>
-                        </div>
+                <div class="col-lg-5 mb-5 mb-lg-0">
+                    <div class="benefits-image">
+                        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="Análisis de Datos Logísticos" 
+                             class="img-fluid rounded-4 shadow">
                     </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
-                        <div>
-                            <p class="mb-0">Optimiza la asignación de recursos limitados</p>
-                        </div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
-                        <div>
-                            <p class="mb-0">Mejora la eficiencia en la cadena de suministro</p>
+                </div>
+                <div class="col-lg-7">
+                    <div class="benefits-content">
+                        <h2 class="fw-bold mb-4">
+                            Optimiza tu Cadena de <span class="text-gradient">Suministro</span>
+                        </h2>
+                        <p class="lead mb-5">
+                            Nuestra plataforma transforma datos complejos en decisiones inteligentes, proporcionando soluciones óptimas para problemas logísticos reales.
+                        </p>
+                        
+                        <div class="benefits-grid">
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="bi bi-cash-coin"></i>
+                                </div>
+                                <div class="benefit-text">
+                                    <h5>Reducción de Costos</h5>
+                                    <p>Minimiza hasta un 30% los gastos operativos de transporte</p>
+                                </div>
+                            </div>
+                            
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="bi bi-speedometer2"></i>
+                                </div>
+                                <div class="benefit-text">
+                                    <h5>Eficiencia Operativa</h5>
+                                    <p>Optimiza rutas y tiempos de entrega en tiempo real</p>
+                                </div>
+                            </div>
+                            
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="bi bi-bar-chart-line"></i>
+                                </div>
+                                <div class="benefit-text">
+                                    <h5>Análisis Predictivo</h5>
+                                    <p>Anticipa necesidades y planifica con precisión</p>
+                                </div>
+                            </div>
+                            
+                            <div class="benefit-card">
+                                <div class="benefit-icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div class="benefit-text">
+                                    <h5>Decisiones Confiables</h5>
+                                    <p>Basadas en algoritmos matemáticos comprobados</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="how-it-works">
-                        <h4>¿Cómo funciona?</h4>
-                        <ol>
-                            <li>Define tus orígenes, destinos y costos de transporte</li>
-                            <li>Selecciona el método de solución que prefieras</li>
-                            <li>Ingresa los datos requeridos en el formulario</li>
-                            <li>Obtén la solución óptima con el detalle de asignaciones</li>
-                            <li>Analiza los resultados y costos totales</li>
-                        </ol>
-                        <div class="note-box">
-                            <p class="mb-0"><strong>Nota:</strong> Cada método tiene sus ventajas y es más adecuado para diferentes tipos de problemas. Experimenta con varios para encontrar la mejor solución.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="como-funciona" class="how-it-works-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Cómo <span class="text-gradient">Funciona</span></h2>
+                    <p class="section-subtitle">Cuatro simples pasos para optimizar tu transporte</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <div class="step-icon">
+                            <i class="bi bi-input-cursor"></i>
                         </div>
+                        <h4 class="step-title">Ingresa los Datos</h4>
+                        <p class="step-description">
+                            Define orígenes, destinos, ofertas, demandas y matriz de costos en una interfaz intuitiva
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <div class="step-icon">
+                            <i class="bi bi-calculator"></i>
+                        </div>
+                        <h4 class="step-title">Selecciona Método</h4>
+                        <p class="step-description">
+                            Elige entre cuatro algoritmos optimizados según la complejidad de tu problema
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <div class="step-icon">
+                            <i class="bi bi-gear"></i>
+                        </div>
+                        <h4 class="step-title">Procesa Solución</h4>
+                        <p class="step-description">
+                            Nuestra plataforma calcula automáticamente la distribución óptima
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="step-card">
+                        <div class="step-number">04</div>
+                        <div class="step-icon">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <h4 class="step-title">Analiza Resultados</h4>
+                        <p class="step-description">
+                            Visualiza y exporta la solución con detalles completos y gráficos interactivos
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <div class="cta-box">
+                        <h3 class="cta-title">¿Listo para Optimizar?</h3>
+                        <p class="cta-subtitle">Comienza ahora y transforma tu logística</p>
+                        <a href="#metodos" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                            <i class="bi bi-rocket-takeoff me-2"></i> Comenzar Gratis
+                        </a>
                     </div>
                 </div>
             </div>
@@ -220,16 +1365,335 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="footer-brand">
+                        <i class="bi bi-graph-up-arrow footer-logo"></i>
+                        <h3 class="footer-brand-name">Transport<span class="brand-highlight">Solver</span></h3>
+                        <p class="footer-description">
+                            Plataforma profesional de optimización logística basada en investigación de operaciones.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="footer-title">Métodos Disponibles</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'northwest_app:esquina_noroeste' %}">Esquina Noroeste</a></li>
+                        <li><a href="{% url 'northwest_app:costo_minimo' %}">Costo Mínimo</a></li>
+                        <li><a href="{% url 'northwest_app:hungaro' %}">Método Húngaro</a></li>
+                        <li><a href="{% url 'northwest_app:vogel' %}">Método Vogel</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4">
+                    <h5 class="footer-title">Recursos</h5>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#metodos">Métodos</a></li>
+                        <li><a href="#beneficios">Beneficios</a></li>
+                        <li><a href="#como-funciona">Cómo Funciona</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="footer-divider">
+            
             <div class="row align-items-center">
-                <div class="col-md-12 text-center">
-                    <p class="mb-0">&copy; 2025 Solucionador de Problemas de Transporte.</p>
+                <div class="col-md-6">
+                    <p class="footer-copyright">
+                        &copy; 2025 TransportSolver. Todos los derechos reservados.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="bi bi-github"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-envelope"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top">
+        <i class="bi bi-chevron-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'northwest_app/js/page-nav.js' %}" defer></script>
-    <script src="{% static 'northwest_app/js/script_portada.js' %}" defer></script>
+    
+    <!-- JavaScript Inline -->
+    <script>
+        // ============================================
+        // PRELOADER
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ocultar preloader cuando la página cargue
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const preloader = document.getElementById('preloader');
+                    preloader.style.opacity = '0';
+                    preloader.style.visibility = 'hidden';
+                }, 1000);
+            });
+
+            // ============================================
+            // NAVBAR SCROLL EFFECT
+            // ============================================
+            const navbar = document.querySelector('.custom-navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // ============================================
+            // BACK TO TOP BUTTON
+            // ============================================
+            const backToTopButton = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // ============================================
+            // PARTICLE BACKGROUND
+            // ============================================
+            function initParticles() {
+                const container = document.getElementById('particles-container');
+                if (!container) return;
+
+                const particleCount = 50;
+                const particles = [];
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // Posición aleatoria
+                    const posX = Math.random() * 100;
+                    const posY = Math.random() * 100;
+                    particle.style.left = `${posX}%`;
+                    particle.style.top = `${posY}%`;
+                    
+                    // Tamaño aleatorio
+                    const size = Math.random() * 4 + 1;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Opacidad aleatoria
+                    particle.style.opacity = Math.random() * 0.5 + 0.1;
+                    
+                    // Velocidad aleatoria
+                    const speed = Math.random() * 2 + 1;
+                    particle.dataset.speed = speed;
+                    
+                    // Dirección inicial
+                    particle.dataset.directionX = Math.random() > 0.5 ? 1 : -1;
+                    particle.dataset.directionY = Math.random() > 0.5 ? 1 : -1;
+                    
+                    container.appendChild(particle);
+                    particles.push(particle);
+                }
+
+                // Animación de partículas
+                function animateParticles() {
+                    particles.forEach(particle => {
+                        let x = parseFloat(particle.style.left);
+                        let y = parseFloat(particle.style.top);
+                        const speed = parseFloat(particle.dataset.speed);
+                        const dirX = parseFloat(particle.dataset.directionX);
+                        const dirY = parseFloat(particle.dataset.directionY);
+                        
+                        x += dirX * speed * 0.1;
+                        y += dirY * speed * 0.1;
+                        
+                        // Rebotar en los bordes
+                        if (x <= 0 || x >= 100) particle.dataset.directionX = -dirX;
+                        if (y <= 0 || y >= 100) particle.dataset.directionY = -dirY;
+                        
+                        particle.style.left = `${x}%`;
+                        particle.style.top = `${y}%`;
+                    });
+                    
+                    requestAnimationFrame(animateParticles);
+                }
+                
+                animateParticles();
+            }
+
+            // ============================================
+            // ANIMATE ON SCROLL
+            // ============================================
+            function animateOnScroll() {
+                const elements = document.querySelectorAll('.method-card, .step-card, .benefit-card');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -100px 0px'
+                });
+                
+                elements.forEach(element => {
+                    element.style.opacity = '0';
+                    observer.observe(element);
+                });
+            }
+
+            // ============================================
+            // SMOOTH SCROLL FOR ANCHOR LINKS
+            // ============================================
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    
+                    if (href === '#') return;
+                    
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    
+                    if (targetElement) {
+                        const navbarHeight = document.querySelector('.custom-navbar').offsetHeight;
+                        const targetPosition = targetElement.offsetTop - navbarHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // ============================================
+            // METHOD CARDS HOVER EFFECT
+            // ============================================
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    const method = this.dataset.method;
+                    const icon = this.querySelector('.method-icon-wrapper');
+                    
+                    // Añadir efecto de pulso al icono
+                    icon.style.animation = 'pulse 1s ease';
+                    
+                    setTimeout(() => {
+                        icon.style.animation = '';
+                    }, 1000);
+                });
+            });
+
+            // ============================================
+            // COUNTER ANIMATION FOR STATS
+            // ============================================
+            function animateStats() {
+                const statNumbers = document.querySelectorAll('.stat-number');
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const statNumber = entry.target;
+                            const targetValue = statNumber.textContent;
+                            
+                            if (targetValue === '∞') return; // Skip infinity
+                            
+                            const target = parseInt(targetValue);
+                            let current = 0;
+                            const increment = target / 50;
+                            const duration = 1500;
+                            const stepTime = duration / 50;
+                            
+                            const timer = setInterval(() => {
+                                current += increment;
+                                if (current >= target) {
+                                    statNumber.textContent = targetValue;
+                                    clearInterval(timer);
+                                } else {
+                                    statNumber.textContent = Math.floor(current);
+                                }
+                            }, stepTime);
+                            
+                            observer.unobserve(statNumber);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                statNumbers.forEach(stat => observer.observe(stat));
+            }
+
+            // ============================================
+            // INITIALIZE ALL FUNCTIONS
+            // ============================================
+            initParticles();
+            animateOnScroll();
+            animateStats();
+
+            // ============================================
+            // IMAGE LAZY LOADING
+            // ============================================
+            const images = document.querySelectorAll('img');
+            
+            const imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        }
+                        imageObserver.unobserve(img);
+                    }
+                });
+            }, { rootMargin: '0px 0px 100px 0px' });
+            
+            images.forEach(img => {
+                if (img.getAttribute('src').includes('unsplash')) {
+                    img.setAttribute('data-src', img.getAttribute('src'));
+                    img.removeAttribute('src');
+                    imageObserver.observe(img);
+                }
+            });
+
+            // ============================================
+            // RESPONSIVE NAVBAR TOGGLE
+            // ============================================
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            if (navbarToggler && navbarCollapse) {
+                navbarToggler.addEventListener('click', function() {
+                    navbarCollapse.classList.toggle('show');
+                });
+                
+                // Cerrar navbar al hacer click en un enlace
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (navbarCollapse.classList.contains('show')) {
+                            navbarCollapse.classList.remove('show');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

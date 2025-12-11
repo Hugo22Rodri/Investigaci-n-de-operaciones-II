@@ -4,99 +4,715 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Método de Vogel - Solución de Problemas de Transporte</title>
+    <title>Método Vogel | Solución Avanzada para Problemas de Transporte</title>
+    <meta name="description" content="Implementa el método de aproximación de Vogel (VAM) para optimizar problemas de transporte con algoritmos de penalización avanzados.">
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'northwest_app/style-index.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Estilos adicionales para asegurar funcionalidad */
-        .btn-light, .btn-outline-light {
-            cursor: pointer !important;
+        /* ===========================================
+           VARIABLES Y ESTILOS BASE
+           =========================================== */
+        :root {
+            --vogel-primary: #4361ee;
+            --vogel-secondary: #3a0ca3;
+            --vogel-accent: #4cc9f0;
+            --vogel-success: #38b000;
+            --vogel-warning: #ff9e00;
+            --vogel-light: #f8f9fa;
+            --vogel-dark: #212529;
+            
+            --gradient-vogel: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --gradient-accent: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+            --gradient-success: linear-gradient(135deg, #38b000 0%, #80b918 100%);
+            
+            --shadow-sm: 0 2px 8px rgba(67, 97, 238, 0.08);
+            --shadow-md: 0 4px 20px rgba(67, 97, 238, 0.12);
+            --shadow-lg: 0 8px 40px rgba(67, 97, 238, 0.16);
+            --shadow-xl: 0 12px 60px rgba(67, 97, 238, 0.2);
+            
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--vogel-dark);
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            overflow-x: hidden;
+        }
+
+        /* ===========================================
+           NAVBAR PROFESIONAL
+           =========================================== */
+        .vogel-navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .vogel-navbar.scrolled {
+            padding: 0.75rem 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand-vogel {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-vogel);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link-vogel {
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.25rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            color: var(--vogel-dark) !important;
+        }
+
+        .nav-link-vogel:hover,
+        .nav-link-vogel.active {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--vogel-primary) !important;
+        }
+
+        .dropdown-menu-vogel {
+            border: none;
+            box-shadow: var(--shadow-lg);
+            border-radius: 15px;
+            padding: 0.75rem;
+            min-width: 250px;
+        }
+
+        /* ===========================================
+           HERO SECTION VOGEL
+           =========================================== */
+        .vogel-hero {
+            min-height: 90vh;
+            padding-top: 100px;
             position: relative;
-            z-index: 10;
+            overflow: hidden;
         }
-        
-        /* Asegurar que los enlaces sean clickeables */
-        a[href]:not(.nav-link) {
-            cursor: pointer;
+
+        .vogel-hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4361ee15 0%, #3a0ca310 100%);
+            z-index: -1;
+        }
+
+        .vogel-badge {
+            display: inline-block;
+            background: var(--gradient-vogel);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .vogel-hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-vogel);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .vogel-hero-subtitle {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        /* ===========================================
+           MATRIZ VOGEL INTERACTIVA
+           =========================================== */
+        .vogel-matrix-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(67, 97, 238, 0.1);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vogel-matrix-header {
+            display: grid;
+            grid-template-columns: 100px repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .vogel-matrix-cell {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .vogel-matrix-cell.cost {
+            font-size: 1.1rem;
+            color: var(--vogel-dark);
+        }
+
+        .vogel-matrix-cell.cost:hover {
+            border-color: var(--vogel-primary);
+            background: rgba(67, 97, 238, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .vogel-matrix-cell.penalty {
+            background: var(--gradient-vogel);
+            color: white;
+            border: none;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        .vogel-matrix-cell.selected {
+            background: var(--gradient-success);
+            color: white;
+            border: none;
+            box-shadow: 0 5px 15px rgba(56, 176, 0, 0.3);
+        }
+
+        .vogel-matrix-cell.header {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--vogel-primary);
+            font-weight: 600;
+            border: none;
+        }
+
+        .allocation-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--gradient-success);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(56, 176, 0, 0.3);
+        }
+
+        /* ===========================================
+           PASOS DEL ALGORITMO
+           =========================================== */
+        .vogel-steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .vogel-step {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid var(--vogel-primary);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vogel-step:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .vogel-step-number {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-vogel);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .vogel-step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--vogel-primary);
+        }
+
+        .vogel-step-content {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .vogel-step-formula {
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 3px solid var(--vogel-primary);
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        /* ===========================================
+           EJEMPLO INTERACTIVO
+           =========================================== */
+        .vogel-example-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .vogel-example-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--vogel-primary);
+            text-align: center;
+        }
+
+        .vogel-example-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .vogel-example-step:hover {
+            background: rgba(67, 97, 238, 0.1);
+            transform: translateX(10px);
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-vogel);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        /* ===========================================
+           COMPARATIVA DE MÉTODOS
+           =========================================== */
+        .vogel-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .comparison-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .comparison-card.vogel {
+            border-top: 5px solid var(--vogel-primary);
+        }
+
+        .comparison-card.northwest {
+            border-top: 5px solid #6c757d;
+        }
+
+        .comparison-card.mincost {
+            border-top: 5px solid #ff9e00;
+        }
+
+        .comparison-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .comparison-icon.vogel {
+            background: var(--gradient-vogel);
+            color: white;
+        }
+
+        .comparison-icon.northwest {
+            background: #6c757d;
+            color: white;
+        }
+
+        .comparison-icon.mincost {
+            background: #ff9e00;
+            color: white;
+        }
+
+        /* ===========================================
+           CTA SECTION
+           =========================================== */
+        .vogel-cta {
+            background: var(--gradient-vogel);
+            color: white;
+            padding: 5rem 2rem;
+            border-radius: 30px;
+            text-align: center;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vogel-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .vogel-cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vogel-cta-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button {
+            background: white;
+            color: var(--vogel-primary);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
             text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
-        
-        /* Prevenir interferencias de otros estilos */
-        .hero-buttons a {
-            pointer-events: auto !important;
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            color: var(--vogel-primary);
         }
-        
-        /* Estilos específicos para Vogel */
-        .penalty-cell {
-            background-color: #e7f3ff !important;
-            font-weight: bold;
+
+        /* ===========================================
+           FOOTER VOGEL
+           =========================================== */
+        .vogel-footer {
+            background: var(--vogel-dark);
+            color: white;
+            padding: 4rem 0 2rem;
         }
-        
-        .selected-cell {
-            background-color: #d4edda !important;
-            border: 2px solid #28a745 !important;
+
+        .footer-brand-vogel {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-vogel);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--vogel-accent);
+            padding-left: 5px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--vogel-primary);
+            transform: translateY(-3px);
+        }
+
+        /* ===========================================
+           ANIMACIONES
+           =========================================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ===========================================
+           RESPONSIVE
+           =========================================== */
+        @media (max-width: 992px) {
+            .vogel-hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .vogel-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .vogel-cta {
+                padding: 3rem 1.5rem;
+            }
+            
+            .vogel-cta-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .vogel-hero-title {
+                font-size: 2.3rem;
+            }
+            
+            .vogel-matrix-container {
+                padding: 1.5rem;
+                overflow-x: auto;
+            }
+            
+            .vogel-matrix-header {
+                grid-template-columns: repeat(5, 150px);
+            }
+            
+            .vogel-step {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .vogel-hero-title {
+                font-size: 2rem;
+            }
+            
+            .vogel-badge {
+                font-size: 0.8rem;
+                padding: 0.4rem 1rem;
+            }
+            
+            .vogel-example-container {
+                padding: 1.5rem;
+            }
+            
+            .cta-button {
+                padding: 0.875rem 2rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+    <nav class="navbar navbar-expand-lg fixed-top vogel-navbar">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-graph-up-arrow me-2"></i>Método de Vogel
+            <a class="navbar-brand-vogel" href="{% url 'northwest_app:index' %}">
+                <i class="bi bi-graph-up-arrow me-2"></i>Método Vogel
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVogel">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+            
+            <div class="collapse navbar-collapse" id="navbarVogel">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="#introduccion">Introducción</a>
+                        <a class="nav-link-vogel" href="#que-es">¿Qué es?</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#pasos">Pasos</a>
+                        <a class="nav-link-vogel" href="#algoritmo">Algoritmo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#ejemplo">Ejemplo</a>
+                        <a class="nav-link-vogel" href="#ejemplo">Ejemplo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#ventajas">Ventajas</a>
+                        <a class="nav-link-vogel" href="#comparativa">Comparativa</a>
                     </li>
-                    <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-diagram-3 me-1"></i>Métodos
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="{% url 'northwest_app:index' %}">
-                                <i class="bi bi-house me-2"></i>Inicio
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'northwest_app:esquina_noroeste' %}">
-                                <i class="bi bi-grid-3x3-gap me-2"></i>Esquina Noroeste
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'northwest_app:costo_minimo' %}">
-                                <i class="bi bi-graph-down me-2"></i>Costo Mínimo
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'northwest_app:hungaro' %}">
-                                <i class="bi bi-table"></i> Método Húngaro
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                    <li class="nav-item ms-2">
-                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-calculator me-1"></i>Usar Calculadora
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link-vogel dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-grid-3x3 me-2"></i>Métodos
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-vogel">
+                            <li><h6 class="dropdown-header">Seleccionar Método</h6></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item py-3" href="{% url 'northwest_app:esquina_noroeste' %}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle bg-secondary me-3">
+                                            <i class="bi bi-arrow-up-left text-white"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Esquina Noroeste</div>
+                                            <small class="text-muted">Método básico</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-3" href="{% url 'northwest_app:costo_minimo' %}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle bg-warning me-3">
+                                            <i class="bi bi-currency-dollar text-white"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Costo Mínimo</div>
+                                            <small class="text-muted">Optimización por costo</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-3" href="{% url 'northwest_app:hungaro' %}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle bg-info me-3">
+                                            <i class="bi bi-table text-white"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Método Húngaro</div>
+                                            <small class="text-muted">Problemas de asignación</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary px-4 py-2 rounded-pill fw-medium">
+                            <i class="bi bi-calculator me-2"></i>Calcular
                         </a>
                     </li>
                 </ul>
@@ -105,354 +721,409 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="vogel-hero" id="inicio">
+        <div class="vogel-hero-bg"></div>
         <div class="container">
-            <div class="row align-items-center min-vh-75">
-                <div class="col-lg-8 mx-auto text-center">
-                    <div class="hero-badge mb-3">Método de Optimización Avanzada</div>
-                    <h1 class="display-4 fw-bold mb-3 hero-title">
-                        <i class="bi bi-graph-up-arrow hero-icon"></i> Método de Vogel
+            <div class="row align-items-center min-vh-90">
+                <div class="col-lg-6">
+                    <div class="vogel-badge">Algoritmo de Penalización Avanzado</div>
+                    <h1 class="vogel-hero-title">
+                        Método de Aproximación de <span style="display: block;">Vogel (VAM)</span>
                     </h1>
-                    <p class="lead mb-4 hero-subtitle">Algoritmo de aproximación para encontrar soluciones iniciales de alta calidad en problemas de transporte</p>
-                    <div class="hero-buttons">
-                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-light btn-lg rounded-pill px-4 py-3 me-3" id="calcularBtn">
-                            <i class="bi bi-calculator me-2"></i> Calcular Ahora
+                    <p class="vogel-hero-subtitle">
+                        Algoritmo heurístico avanzado que resuelve problemas de transporte mediante el cálculo inteligente de penalizaciones por costos de oportunidad, produciendo soluciones iniciales cercanas al óptimo global.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mt-4">
+                        <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary px-4 py-3 rounded-pill fw-medium d-flex align-items-center">
+                            <i class="bi bi-play-circle me-2"></i> Usar Calculadora
                         </a>
-                        <a href="#introduccion" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3" id="saberMasBtn">
-                            <i class="bi bi-book me-2"></i> Saber Más
+                        <a href="#algoritmo" class="btn btn-outline-primary px-4 py-3 rounded-pill fw-medium d-flex align-items-center">
+                            <i class="bi bi-book me-2"></i> Ver Algoritmo
                         </a>
                     </div>
-                    <div class="hero-stats mt-5">
-                        <div class="row justify-content-center">
-                            <div class="col-auto">
-                                <div class="stat-item">
-                                    <i class="bi bi-bullseye"></i>
-                                    <span>Preciso</span>
-                                </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="vogel-matrix-container">
+                        <h5 class="text-center mb-4 fw-bold text-primary">Matriz de Costos con Penalizaciones</h5>
+                        <div class="vogel-matrix-header">
+                            <div class="vogel-matrix-cell header">Origen/Destino</div>
+                            <div class="vogel-matrix-cell header">D1 (30)</div>
+                            <div class="vogel-matrix-cell header">D2 (25)</div>
+                            <div class="vogel-matrix-cell header">D3 (35)</div>
+                            <div class="vogel-matrix-cell header">Oferta → Penalización</div>
+                        </div>
+                        <div class="vogel-matrix-header">
+                            <div class="vogel-matrix-cell header">O1 (35)</div>
+                            <div class="vogel-matrix-cell cost">6</div>
+                            <div class="vogel-matrix-cell cost selected">
+                                8
+                                <div class="allocation-badge">25</div>
                             </div>
-                            <div class="col-auto">
-                                <div class="stat-item">
-                                    <i class="bi bi-star"></i>
-                                    <span>Eficiente</span>
-                                </div>
+                            <div class="vogel-matrix-cell cost">10</div>
+                            <div class="vogel-matrix-cell penalty">2</div>
+                        </div>
+                        <div class="vogel-matrix-header">
+                            <div class="vogel-matrix-cell header">O2 (50)</div>
+                            <div class="vogel-matrix-cell cost">5</div>
+                            <div class="vogel-matrix-cell cost selected">
+                                2
+                                <div class="allocation-badge">25</div>
                             </div>
-                            <div class="col-auto">
-                                <div class="stat-item">
-                                    <i class="bi bi-award"></i>
-                                    <span>Óptimo</span>
-                                </div>
+                            <div class="vogel-matrix-cell cost">8</div>
+                            <div class="vogel-matrix-cell penalty">3</div>
+                        </div>
+                        <div class="vogel-matrix-header">
+                            <div class="vogel-matrix-cell header">O3 (40)</div>
+                            <div class="vogel-matrix-cell cost">6</div>
+                            <div class="vogel-matrix-cell cost">7</div>
+                            <div class="vogel-matrix-cell cost selected">
+                                10
+                                <div class="allocation-badge">35</div>
                             </div>
+                            <div class="vogel-matrix-cell penalty">1</div>
+                        </div>
+                        <div class="vogel-matrix-header mt-3">
+                            <div class="vogel-matrix-cell header">Penalización Columna</div>
+                            <div class="vogel-matrix-cell penalty">1</div>
+                            <div class="vogel-matrix-cell penalty">5</div>
+                            <div class="vogel-matrix-cell penalty">2</div>
+                            <div class="vogel-matrix-cell" style="background: transparent; border: none;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="hero-wave">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
-                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
-                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
-            </svg>
         </div>
     </section>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <!-- Introducción -->
-                    <section id="introduccion" class="content-section">
-                        <div class="section-header mb-4">
-                            <span class="section-badge">01</span>
-                            <h2 class="section-title">¿Qué es el método de Vogel?</h2>
+    <main class="container py-5">
+        <!-- ¿Qué es? -->
+        <section id="que-es" class="py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">¿Qué es el Método Vogel?</h2>
+                <p class="text-muted fs-5 mx-auto" style="max-width: 800px;">
+                    El Método de Aproximación de Vogel (VAM) es un algoritmo heurístico que produce soluciones iniciales de alta calidad para problemas de transporte, considerando los costos de oportunidad de no elegir la mejor opción disponible.
+                </p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="vogel-step">
+                        <div class="vogel-step-number">1</div>
+                        <h3 class="vogel-step-title">Concepto Principal</h3>
+                        <p class="vogel-step-content">
+                            VAM calcula penalizaciones para cada fila y columna basándose en la diferencia entre los dos costos más bajos. Esta penalización representa el costo de oportunidad de no elegir la opción más económica.
+                        </p>
+                        <div class="vogel-step-formula">
+                            Penalización = 2do costo más bajo - 1er costo más bajo
                         </div>
-                        <div class="card feature-card">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <div class="col-lg-8">
-                                        <p class="card-text fs-5">El método de Vogel, también conocido como método de aproximación de Vogel (VAM), es un algoritmo heurístico utilizado para encontrar una solución inicial de alta calidad en problemas de transporte. A diferencia de métodos más simples, VAM considera los costos de oportunidad al tomar decisiones de asignación.</p>
-                                        
-                                        <p class="card-text">Este método calcula penalizaciones para cada fila y columna basadas en la diferencia entre los dos costos más bajos, asignando recursos a las celdas con menor costo en aquellas filas o columnas con mayor penalización, lo que generalmente produce soluciones cercanas al óptimo.</p>
-                                        
-                                        <div class="mt-4">
-                                            <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary">
-                                                <i class="bi bi-calculator me-2"></i>Probar el Método
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 text-center">
-                                        <div class="method-visual">
-                                            <div class="grid-container">
-                                                <div class="grid-cell start-cell">Calcular Penalizaciones</div>
-                                                <div class="grid-arrow">↓</div>
-                                                <div class="grid-cell">Seleccionar Mayor Penalización</div>
-                                                <div class="grid-arrow">↓</div>
-                                                <div class="grid-cell end-cell">Asignar Mínimo Costo</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Pasos del método -->
-                    <section id="pasos" class="content-section">
-                        <div class="section-header mb-4">
-                            <span class="section-badge">02</span>
-                            <h2 class="section-title">Pasos del método</h2>
-                        </div>
-                        <div class="card step-card">
-                            <div class="card-body p-4">
-                                <div class="steps-container">
-                                    <div class="step-item">
-                                        <div class="step-number">1</div>
-                                        <div class="step-content">
-                                            <h5>Calcular penalizaciones</h5>
-                                            <p>Para cada fila y columna, calcule la diferencia entre los dos costos más bajos (penalización)</p>
-                                        </div>
-                                    </div>
-                                    <div class="step-item">
-                                        <div class="step-number">2</div>
-                                        <div class="step-content">
-                                            <h5>Identificar máxima penalización</h5>
-                                            <p>Seleccione la fila o columna con la penalización más alta</p>
-                                        </div>
-                                    </div>
-                                    <div class="step-item">
-                                        <div class="step-number">3</div>
-                                        <div class="step-content">
-                                            <h5>Asignar al menor costo</h5>
-                                            <p>En la fila/columna seleccionada, asigne a la celda con el costo más bajo</p>
-                                        </div>
-                                    </div>
-                                    <div class="step-item">
-                                        <div class="step-number">4</div>
-                                        <div class="step-content">
-                                            <h5>Ajustar oferta y demanda</h5>
-                                            <p>Actualice los valores de oferta y demanda restando la cantidad asignada</p>
-                                        </div>
-                                    </div>
-                                    <div class="step-item">
-                                        <div class="step-number">5</div>
-                                        <div class="step-content">
-                                            <h5>Repetir el proceso</h5>
-                                            <p>Continúe hasta satisfacer todas las ofertas y demandas</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Ejemplo -->
-                    <section id="ejemplo" class="content-section">
-                        <div class="section-header mb-4">
-                            <span class="section-badge">03</span>
-                            <h2 class="section-title">Ejemplo ilustrativo</h2>
-                        </div>
-                        <div class="card">
-                            <div class="card-body p-4">
-                                <p class="lead">Supongamos que tenemos 3 fábricas (orígenes) y 4 almacenes (destinos) con los siguientes costos de transporte:</p>
-                                
-                                <div class="table-responsive example-table mb-4">
-                                    <table class="table table-custom">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>Almacén A</th>
-                                                <th>Almacén B</th>
-                                                <th>Almacén C</th>
-                                                <th>Almacén D</th>
-                                                <th class="text-center bg-light">Oferta</th>
-                                                <th class="text-center penalty-cell">Penalización</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th class="bg-light">Fábrica 1</th>
-                                                <td>6</td>
-                                                <td class="selected-cell">8</td>
-                                                <td>10</td>
-                                                <td>9</td>
-                                                <td class="text-center fw-bold bg-light">35</td>
-                                                <td class="text-center fw-bold penalty-cell">2</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light">Fábrica 2</th>
-                                                <td>5</td>
-                                                <td>2</td>
-                                                <td>8</td>
-                                                <td>7</td>
-                                                <td class="text-center fw-bold bg-light">50</td>
-                                                <td class="text-center fw-bold penalty-cell">3</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="bg-light">Fábrica 3</th>
-                                                <td>6</td>
-                                                <td>7</td>
-                                                <td>10</td>
-                                                <td>8</td>
-                                                <td class="text-center fw-bold bg-light">40</td>
-                                                <td class="text-center fw-bold penalty-cell">1</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-center bg-light">Demanda</th>
-                                                <td class="text-center fw-bold bg-light">30</td>
-                                                <td class="text-center fw-bold bg-light">25</td>
-                                                <td class="text-center fw-bold bg-light">35</td>
-                                                <td class="text-center fw-bold bg-light">35</td>
-                                                <td class="bg-light"></td>
-                                                <td class="penalty-cell"></td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-center penalty-cell">Penalización</th>
-                                                <td class="text-center fw-bold penalty-cell">1</td>
-                                                <td class="text-center fw-bold penalty-cell">5</td>
-                                                <td class="text-center fw-bold penalty-cell">2</td>
-                                                <td class="text-center fw-bold penalty-cell">1</td>
-                                                <td class="penalty-cell"></td>
-                                                <td class="penalty-cell"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                <div class="solution-process">
-                                    <h5 class="process-title">Proceso de solución paso a paso:</h5>
-                                    <div class="process-steps">
-                                        <div class="process-step">
-                                            <span class="step-marker">1</span>
-                                            <p>Calculamos penalizaciones: Columna B tiene la mayor penalización (5)</p>
-                                        </div>
-                                        <div class="process-step">
-                                            <span class="step-marker">2</span>
-                                            <p>En columna B, el costo mínimo es 2 (Fábrica 2)</p>
-                                        </div>
-                                        <div class="process-step">
-                                            <span class="step-marker">3</span>
-                                            <p>Asignamos 25 unidades de Fábrica 2 a Almacén B (mínimo entre 50 y 25)</p>
-                                        </div>
-                                        <div class="process-step">
-                                            <span class="step-marker">4</span>
-                                            <p>Ajustamos: Oferta F2 = 25, Demanda AB = 0. Recalculamos penalizaciones</p>
-                                        </div>
-                                        <div class="process-step">
-                                            <span class="step-marker">5</span>
-                                            <p>Continuamos el proceso hasta satisfacer toda la demanda</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Ventajas -->
-                    <section id="ventajas" class="content-section">
-                        <div class="section-header mb-4">
-                            <span class="section-badge">04</span>
-                            <h2 class="section-title">Ventajas del método</h2>
-                        </div>
-                        <div class="card">
-                            <div class="card-body p-4">
-                                <div class="row g-4">
-                                    <div class="col-md-4">
-                                        <div class="feature-card text-center p-3 h-100">
-                                            <div class="feature-icon">
-                                                <i class="bi bi-bullseye"></i>
-                                            </div>
-                                            <h5>Alta precisión</h5>
-                                            <p class="text-muted">Proporciona soluciones iniciales muy cercanas al óptimo, reduciendo iteraciones posteriores</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="feature-card text-center p-3 h-100">
-                                            <div class="feature-icon">
-                                                <i class="bi bi-lightning-charge"></i>
-                                            </div>
-                                            <h5>Eficiencia mejorada</h5>
-                                            <p class="text-muted">Considera costos de oportunidad, lo que lleva a mejores decisiones de asignación</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="feature-card text-center p-3 h-100">
-                                            <div class="feature-icon">
-                                                <i class="bi bi-graph-up-arrow"></i>
-                                            </div>
-                                            <h5>Óptimo frecuente</h5>
-                                            <p class="text-muted">En muchos casos encuentra directamente la solución óptima sin necesidad de mejoras</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-4 pt-3 border-top">
-                                    <h5 class="mb-3">Consideraciones:</h5>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="d-flex align-items-start">
-                                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                                <div>
-                                                    <h6 class="mb-1">Ventaja</h6>
-                                                    <p class="text-muted mb-0">Generalmente produce mejores soluciones iniciales que Esquina Noroeste o Costo Mínimo</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="d-flex align-items-start">
-                                                <i class="bi bi-exclamation-triangle-fill text-warning me-2 mt-1"></i>
-                                                <div>
-                                                    <h6 class="mb-1">Consideración</h6>
-                                                    <p class="text-muted mb-0">Requiere más cálculos que métodos más simples, aunque sigue siendo eficiente</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Call to Action -->
-                    <section class="content-section text-center py-5">
-                        <div class="cta-card">
-                            <h3 class="cta-title">¿Listo para optimizar tu problema de transporte?</h3>
-                            <p class="cta-subtitle">Nuestra herramienta calculará automáticamente la solución usando el método de Vogel para obtener resultados de alta calidad</p>
-                            <div class="cta-buttons">
-                                <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary btn-lg px-5 py-3">
-                                    <i class="bi bi-calculator-fill me-2"></i> Comenzar Ahora
-                                </a>
-                            </div>
-                            <div class="cta-features mt-4">
-                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Preciso</span>
-                                <span class="badge bg-light text-dark me-2"><i class="bi bi-check me-1"></i>Eficiente</span>
-                                <span class="badge bg-light text-dark"><i class="bi bi-check me-1"></i>Gratuito</span>
-                            </div>
-                        </div>
-                    </section>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="vogel-step">
+                        <div class="vogel-step-number">2</div>
+                        <h3 class="vogel-step-title">Ventajas Clave</h3>
+                        <ul class="vogel-step-content" style="list-style: none; padding-left: 0;">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Soluciones cercanas al óptimo</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Considera costos de oportunidad</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Reduce iteraciones posteriores</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Eficiente para problemas grandes</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Algoritmo -->
+        <section id="algoritmo" class="py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Algoritmo VAM - Paso a Paso</h2>
+                <p class="text-muted fs-5">Sigue estos pasos para implementar el método de Vogel</p>
+            </div>
+            
+            <div class="vogel-steps-container">
+                <div class="vogel-step">
+                    <div class="vogel-step-number">1</div>
+                    <h3 class="vogel-step-title">Calcular Penalizaciones</h3>
+                    <p class="vogel-step-content">
+                        Para cada fila y columna, calcule la diferencia entre los dos costos más bajos disponibles. Esta diferencia representa la penalización por no elegir la mejor opción.
+                    </p>
+                </div>
+                
+                <div class="vogel-step">
+                    <div class="vogel-step-number">2</div>
+                    <h3 class="vogel-step-title">Identificar Máxima Penalización</h3>
+                    <p class="vogel-step-content">
+                        Seleccione la fila o columna con la penalización más alta. Esta representa la situación donde la elección incorrecta tiene el mayor costo de oportunidad.
+                    </p>
+                </div>
+                
+                <div class="vogel-step">
+                    <div class="vogel-step-number">3</div>
+                    <h3 class="vogel-step-title">Asignar Recursos</h3>
+                    <p class="vogel-step-content">
+                        En la fila/columna seleccionada, asigne tantas unidades como sea posible al destino con el menor costo disponible. Use el mínimo entre oferta y demanda.
+                    </p>
+                </div>
+                
+                <div class="vogel-step">
+                    <div class="vogel-step-number">4</div>
+                    <h3 class="vogel-step-title">Ajustar y Repetir</h3>
+                    <p class="vogel-step-content">
+                        Actualice las ofertas y demandas, elimine filas/columnas satisfechas y repita el proceso hasta que todas las ofertas y demandas sean satisfechas.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ejemplo Práctico -->
+        <section id="ejemplo" class="py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Ejemplo Práctico</h2>
+                <p class="text-muted fs-5">Caso de estudio: Distribución logística de 3 fábricas a 4 almacenes</p>
+            </div>
+            
+            <div class="vogel-example-container">
+                <h3 class="vogel-example-title">Proceso de Solución</h3>
+                
+                <div class="vogel-example-step">
+                    <div class="step-icon">
+                        <i class="bi bi-1-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">Paso 1: Calcular penalizaciones iniciales</h5>
+                        <p class="text-muted mb-0">Columna D2 tiene la penalización más alta (5)</p>
+                    </div>
+                </div>
+                
+                <div class="vogel-example-step">
+                    <div class="step-icon">
+                        <i class="bi bi-2-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">Paso 2: Asignar a celda con menor costo</h5>
+                        <p class="text-muted mb-0">En columna D2, asignar 25 unidades desde O2 (costo 2)</p>
+                    </div>
+                </div>
+                
+                <div class="vogel-example-step">
+                    <div class="step-icon">
+                        <i class="bi bi-3-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">Paso 3: Actualizar ofertas/demandas</h5>
+                        <p class="text-muted mb-0">O2 ahora tiene 25 unidades, D2 está satisfecho</p>
+                    </div>
+                </div>
+                
+                <div class="vogel-example-step">
+                    <div class="step-icon">
+                        <i class="bi bi-4-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-2">Paso 4: Repetir hasta completar</h5>
+                        <p class="text-muted mb-0">Continuar con el proceso hasta satisfacer todas las demandas</p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-5">
+                    <a href="{% url 'northwest_app:setup' %}" class="btn btn-primary px-5 py-3 rounded-pill">
+                        <i class="bi bi-calculator me-2"></i> Probar con Mis Datos
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparativa -->
+        <section id="comparativa" class="py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Comparativa de Métodos</h2>
+                <p class="text-muted fs-5">Vogel vs otros métodos de solución inicial</p>
+            </div>
+            
+            <div class="vogel-comparison">
+                <div class="comparison-card northwest">
+                    <div class="comparison-icon northwest">
+                        <i class="bi bi-arrow-up-left"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Esquina Noroeste</h4>
+                    <p class="text-muted mb-3">Método simple que ignora costos</p>
+                    <div class="text-start">
+                        <small class="d-block mb-1"><i class="bi bi-x-circle-fill text-danger me-2"></i> No considera costos</small>
+                        <small class="d-block mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i> Simple y rápido</small>
+                        <small class="d-block"><i class="bi bi-x-circle-fill text-danger me-2"></i> Soluciones lejanas al óptimo</small>
+                    </div>
+                </div>
+                
+                <div class="comparison-card mincost">
+                    <div class="comparison-icon mincost">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Costo Mínimo</h4>
+                    <p class="text-muted mb-3">Considera costos pero no penalizaciones</p>
+                    <div class="text-start">
+                        <small class="d-block mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i> Considera costos directos</small>
+                        <small class="d-block mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i> Mejor que Esquina Noroeste</small>
+                        <small class="d-block"><i class="bi bi-x-circle-fill text-danger me-2"></i> Ignora costos de oportunidad</small>
+                    </div>
+                </div>
+                
+                <div class="comparison-card vogel">
+                    <div class="comparison-icon vogel">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Método Vogel</h4>
+                    <p class="text-muted mb-3">Considera penalizaciones y costos de oportunidad</p>
+                    <div class="text-start">
+                        <small class="d-block mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i> Alta precisión inicial</small>
+                        <small class="d-block mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i> Considera costos de oportunidad</small>
+                        <small class="d-block"><i class="bi bi-check-circle-fill text-success me-2"></i> Soluciones cercanas al óptimo</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="vogel-cta">
+            <h2 class="vogel-cta-title">¿Listo para Optimizar?</h2>
+            <p class="vogel-cta-subtitle">
+                Utiliza nuestra calculadora del método Vogel para resolver problemas de transporte complejos de manera eficiente y precisa.
+            </p>
+            <a href="{% url 'northwest_app:setup' %}" class="cta-button">
+                <i class="bi bi-lightning-charge-fill"></i> Usar Calculadora Vogel
+            </a>
+        </section>
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="vogel-footer">
         <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-brand-vogel">
+                        <i class="bi bi-graph-up-arrow me-2"></i>Método Vogel
+                    </div>
+                    <p class="text-muted">
+                        Herramienta profesional para resolver problemas de transporte utilizando el algoritmo de aproximación de Vogel.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="bi bi-github"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <h5 class="text-white mb-3">Métodos Disponibles</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'northwest_app:esquina_noroeste' %}">Esquina Noroeste</a></li>
+                        <li><a href="{% url 'northwest_app:costo_minimo' %}">Costo Mínimo</a></li>
+                        <li><a href="{% url 'northwest_app:hungaro' %}">Método Húngaro</a></li>
+                        <li><a href="{% url 'northwest_app:vogel' %}">Método Vogel</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <h5 class="text-white mb-3">Recursos</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'northwest_app:index' %}">Inicio</a></li>
+                        <li><a href="#algoritmo">Algoritmo</a></li>
+                        <li><a href="#ejemplo">Ejemplos</a></li>
+                        <li><a href="#comparativa">Comparativa</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="bg-white opacity-10 my-4">
+            
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; 2024 Método de Vogel. Todos los derechos reservados.</p>
+                    <p class="text-muted mb-0">
+                        &copy; 2024 Solucionador de Problemas de Transporte. Todos los derechos reservados.
+                    </p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-calculator me-1"></i> Usar Calculadora
+                    <a href="{% url 'northwest_app:setup' %}" class="btn btn-outline-light px-4 py-2 rounded-pill">
+                        <i class="bi bi-calculator me-2"></i> Calcular Ahora
                     </a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'northwest_app/js/page-nav.js' %}" defer></script>
-    <script src="{% static 'northwest_app/js/global.js' %}" defer></script>
+    
+    <!-- JavaScript para interactividad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navbar scroll effect
+            const navbar = document.querySelector('.vogel-navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Smooth scroll para enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        const navbarHeight = navbar.offsetHeight;
+                        const targetPosition = targetElement.offsetTop - navbarHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Animación para las celdas de la matriz
+            const matrixCells = document.querySelectorAll('.vogel-matrix-cell.cost');
+            matrixCells.forEach(cell => {
+                cell.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 20px rgba(67, 97, 238, 0.15)';
+                });
+                
+                cell.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // Animación para pasos del algoritmo
+            const steps = document.querySelectorAll('.vogel-step');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            steps.forEach(step => {
+                step.style.opacity = '0';
+                observer.observe(step);
+            });
+
+            // Tooltip para badges de asignación
+            const allocationBadges = document.querySelectorAll('.allocation-badge');
+            allocationBadges.forEach(badge => {
+                badge.title = 'Unidades asignadas';
+            });
+        });
+    </script>
 </body>
 </html>

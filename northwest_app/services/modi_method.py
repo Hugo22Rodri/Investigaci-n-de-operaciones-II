@@ -38,12 +38,17 @@ def compute_potentials_and_deltas(costs, allocations):
         for idx in range(cols):
             if v[idx] is None:
                 v[idx] = 0
+    # Aplicar redondeo a dos decimales
+    u = [round(val, 2) for val in u]
+    v = [round(val, 2) for val in v]
 
     # Calcular deltas
     deltas = [[None] * cols for _ in range(rows)]
     for i in range(rows):
         for j in range(cols):
-            deltas[i][j] = costs[i][j] - (u[i] + v[j])
+            # redondear delta a dos decimales
+            delta_value = costs[i][j] - (u[i] + v[j])
+            deltas[i][j] = round(delta_value, 2)
 
     # Encontrar el delta más negativo (si existe)
     most_negative = 0
@@ -159,6 +164,11 @@ def apply_modi_improvement(costs, allocations):
 
     # Recalcular totales
     total_cost = sum(alloc[i][j] * costs[i][j] for i in range(rows) for j in range(cols))
-
+    total_cost = round(total_cost, 2)
+    #asegurar redondeo a dos decimales
+    for i in range(rows):
+        for j in range(cols):
+            alloc[i][j] = round(alloc[i][j], 2)
+            
     info.update({'new_allocations': alloc, 'improved': True, 'cycle': cycle_nodes, 'min_adjust': min_value, 'new_total_cost': total_cost})
     return info
